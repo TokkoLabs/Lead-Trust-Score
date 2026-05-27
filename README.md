@@ -1,3 +1,52 @@
+# Lead Trust Copilot
+
+AI-powered lead scoring and trust analysis built on Next.js 14.
+
+## Demo local — levantar el stack desde cero
+
+### Prerrequisitos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y con el daemon activo.
+- Una clave de API de Anthropic (obtener en <https://console.anthropic.com/>).
+
+### Pasos
+
+```bash
+# 1. Clonar el repositorio
+git clone <repo-url> lead-trust-copilot
+cd lead-trust-copilot
+
+# 2. Crear el archivo de variables de entorno
+cp .env.example .env
+# Editar .env y completar ANTHROPIC_API_KEY con tu clave real
+
+# 3. Construir la imagen (primera vez tarda ~2 min)
+docker build -f docker/Dockerfile -t lead-trust-copilot .
+
+# 4. Levantar el servicio
+docker-compose -f docker/docker-compose.yml up lead-trust-copilot
+
+# 5. Abrir en el navegador
+#    http://localhost:3000
+```
+
+Para detenerlo:
+
+```bash
+docker-compose -f docker/docker-compose.yml down
+```
+
+### Variables de entorno
+
+| Variable | Requerida | Descripcion |
+|----------|-----------|-------------|
+| `ANTHROPIC_API_KEY` | Si | Clave de API para el scoring con Claude |
+| `NODE_ENV` | No | Fijada en `production` por el Dockerfile |
+
+El archivo `.env` nunca debe commitearse. Solo se versiona `.env.example`.
+
+---
+
 # R2D2-Harness — Spec-driven harness for cooperative AI agent teams
 
 > *Cooperative agents. Spec before launch. Trust, but verify.*

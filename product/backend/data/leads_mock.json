@@ -1,0 +1,152 @@
+[
+  {
+    "id": "lead-01",
+    "mensaje": "Hola, estoy buscando un departamento de 2 o 3 ambientes en Palermo o Belgrano, idealmente con balcon y cerca del subte. Tengo listo el presupuesto para cerrar rapido.",
+    "telefono": "+54 11 4523-7890",
+    "email": "martin.garcia@gmail.com",
+    "zona": "Palermo",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 130000,
+    "property_ids": ["prop-01", "prop-07"]
+  },
+  {
+    "id": "lead-02",
+    "mensaje": "Busco casa en zona norte GBA con pileta y jardin para familia de 5 personas. Tengo precalificacion bancaria y puedo firmar escritura en 60 dias. Preferencia por San Isidro o Tigre.",
+    "telefono": "+54 11 6078-3412",
+    "email": "claudia.benitez@outlook.com",
+    "zona": "San Isidro",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 450000,
+    "property_ids": ["prop-06", "prop-11"]
+  },
+  {
+    "id": "lead-03",
+    "mensaje": "Me interesa comprar un PH duplex con patio o terraza en Caballito o Flores. Busco algo con buen estado de conservacion, minimo 3 ambientes. Precio hasta 200k USD.",
+    "telefono": "+54 11 5534-2198",
+    "email": "rodrigo.perez@hotmail.com",
+    "zona": "Caballito",
+    "tipo_propiedad": "ph",
+    "presupuesto_usd": 200000,
+    "property_ids": ["prop-03", "prop-09"]
+  },
+  {
+    "id": "lead-04",
+    "mensaje": "Necesito alquilar una oficina corporativa en Belgrano o Recoleta para mi equipo de 8 personas. Requiero sala de reuniones y estacionamiento. Presupuesto mensual 1500 USD.",
+    "telefono": "+54 11 4711-9025",
+    "email": "patricia.romero@empresa.com.ar",
+    "zona": "Belgrano",
+    "tipo_propiedad": "oficina",
+    "presupuesto_usd": 1500,
+    "property_ids": ["prop-08"]
+  },
+  {
+    "id": "lead-05",
+    "mensaje": "Quiero comprar un local comercial en Palermo o Villa Crespo para abrir un restaurante. El local debe tener minimo 40 m2, frente a calle transitada y habilitacion gastronómica posible.",
+    "telefono": "+54 11 3378-6640",
+    "email": "sebastian.morales@yahoo.com",
+    "zona": "Villa Crespo",
+    "tipo_propiedad": "local_comercial",
+    "presupuesto_usd": 95000,
+    "property_ids": ["prop-04", "prop-12"]
+  },
+  {
+    "id": "lead-06",
+    "mensaje": "info dpto",
+    "telefono": "+54 11 2200-0001",
+    "email": "juan@gmail.com",
+    "zona": "Palermo",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-01"]
+  },
+  {
+    "id": "lead-07",
+    "mensaje": "precio?",
+    "telefono": "+54 11 1100-5555",
+    "email": "ana@hotmail.com",
+    "zona": "Belgrano",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-02"]
+  },
+  {
+    "id": "lead-08",
+    "mensaje": "alquiler",
+    "telefono": "+54 11 4400-8800",
+    "email": "pedro@yahoo.com.ar",
+    "zona": "Caballito",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-10"]
+  },
+  {
+    "id": "lead-09",
+    "mensaje": "necesito casa",
+    "telefono": "+54 11 7700-4400",
+    "email": "lucas@live.com",
+    "zona": "Tigre",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-11"]
+  },
+  {
+    "id": "lead-10",
+    "mensaje": "local disponible",
+    "telefono": "+54 11 9900-3300",
+    "email": "carlos@icloud.com",
+    "zona": "Flores",
+    "tipo_propiedad": "local_comercial",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-04"]
+  },
+  {
+    "id": "lead-11",
+    "mensaje": "comprar propiedad urgente oferta",
+    "telefono": "123",
+    "email": "winner2025@mailinator.com",
+    "zona": "Recoleta",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-05"]
+  },
+  {
+    "id": "lead-12",
+    "mensaje": "FREE PROPERTY INVESTMENT OPPORTUNITY CLICK HERE",
+    "telefono": "abc-xyz",
+    "email": "promo@tempmail.com",
+    "zona": "Palermo",
+    "tipo_propiedad": null,
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-01"]
+  },
+  {
+    "id": "lead-13",
+    "mensaje": "quiero casa jardin piscina mejor precio contactame ya",
+    "telefono": "99",
+    "email": "notreal@guerrillamail.com",
+    "zona": "San Isidro",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-06"]
+  },
+  {
+    "id": "lead-14",
+    "mensaje": "Busco departamento para comprar en Palermo, tengo un presupuesto de 120000 USD pero mi email es nuevo porque tuve problemas con el anterior.",
+    "telefono": "+54 11 5544-3322",
+    "email": "comprador2025@tempmail.com",
+    "zona": "Palermo",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 120000,
+    "property_ids": ["prop-01", "prop-07"]
+  },
+  {
+    "id": "lead-15",
+    "mensaje": "Me interesa el ph en Caballito",
+    "telefono": "54119988",
+    "email": "valeria.torres@gmail.com",
+    "zona": "Caballito",
+    "tipo_propiedad": "ph",
+    "presupuesto_usd": 175000,
+    "property_ids": ["prop-03"]
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "prop-01",
+    "titulo": "Departamento luminoso en Palermo Hollywood",
+    "precio_usd": 120000,
+    "zona": "Palermo",
+    "tipo": "departamento",
+    "dormitorios": 2,
+    "descripcion": "Venta. Departamento de 2 dormitorios, 65 m2, piso 4, luminoso, cocina integrada, balcon corrido. Expensas bajas. A metros del subte D."
+  },
+  {
+    "id": "prop-02",
+    "titulo": "Casa en Belgrano R con jardin",
+    "precio_usd": 310000,
+    "zona": "Belgrano",
+    "tipo": "casa",
+    "dormitorios": 4,
+    "descripcion": "Venta. Casa de 4 dormitorios, 240 m2 cubiertos, jardin de 80 m2, 2 banos, cochera doble. Ideal familia. Barrio residencial tranquilo."
+  },
+  {
+    "id": "prop-03",
+    "titulo": "PH duplex en Caballito",
+    "precio_usd": 175000,
+    "zona": "Caballito",
+    "tipo": "ph",
+    "dormitorios": 3,
+    "descripcion": "Venta. PH en dos plantas, 3 dormitorios, patio propio de 25 m2, living comedor amplio. Sin expensas. A cuadras del Parque Rivadavia."
+  },
+  {
+    "id": "prop-04",
+    "titulo": "Local comercial en Villa Crespo",
+    "precio_usd": 85000,
+    "zona": "Villa Crespo",
+    "tipo": "local_comercial",
+    "dormitorios": 0,
+    "descripcion": "Venta. Local sobre avenida de alto trafico peatonal, 45 m2, frente de 5 metros, bano incorporado. Ideal gastronomia o comercio minorista."
+  },
+  {
+    "id": "prop-05",
+    "titulo": "Departamento monoambiente en Recoleta",
+    "precio_usd": 950,
+    "zona": "Recoleta",
+    "tipo": "departamento",
+    "dormitorios": 1,
+    "descripcion": "Alquiler mensual. Monoambiente de 35 m2 totalmente equipado, piso 8 con vista panoramica, porteria 24hs, laundry en el edificio."
+  },
+  {
+    "id": "prop-06",
+    "titulo": "Casa en San Isidro con pileta",
+    "precio_usd": 480000,
+    "zona": "San Isidro",
+    "tipo": "casa",
+    "dormitorios": 5,
+    "descripcion": "Venta. Chalet de 5 dormitorios, 380 m2, pileta, quincho, jardin de 600 m2, cochera para 3 autos. Premium zona norte GBA."
+  },
+  {
+    "id": "prop-07",
+    "titulo": "Departamento 3 ambientes en Palermo Soho",
+    "precio_usd": 1800,
+    "zona": "Palermo",
+    "tipo": "departamento",
+    "dormitorios": 2,
+    "descripcion": "Alquiler mensual. 3 ambientes, 80 m2, amenities completos (gym, sum, piscina), cochera opcional. Excelente estado."
+  },
+  {
+    "id": "prop-08",
+    "titulo": "Oficina en piso corporativo Belgrano",
+    "precio_usd": 1200,
+    "zona": "Belgrano",
+    "tipo": "oficina",
+    "dormitorios": 0,
+    "descripcion": "Alquiler mensual. Oficina de 55 m2 en edificio corporativo con recepcion compartida, sala de reuniones, estacionamiento cubierto. Ideal pymes."
+  },
+  {
+    "id": "prop-09",
+    "titulo": "PH en planta baja Flores",
+    "precio_usd": 95000,
+    "zona": "Flores",
+    "tipo": "ph",
+    "dormitorios": 2,
+    "descripcion": "Venta. PH en planta baja, 2 dormitorios, patio de 30 m2, cocina separada. Sin expensas. Acceso independiente desde calle tranquila."
+  },
+  {
+    "id": "prop-10",
+    "titulo": "Departamento 1 dormitorio en Caballito",
+    "precio_usd": 750,
+    "zona": "Caballito",
+    "tipo": "departamento",
+    "dormitorios": 1,
+    "descripcion": "Alquiler mensual. 1 dormitorio, 45 m2, piso 2, balcon, cerca de shoppings y subte B. Expensas incluidas en el precio."
+  },
+  {
+    "id": "prop-11",
+    "titulo": "Casa en Tigre frente al rio",
+    "precio_usd": 220000,
+    "zona": "Tigre",
+    "tipo": "casa",
+    "dormitorios": 3,
+    "descripcion": "Venta. Casa con frente al rio Lujan, 3 dormitorios, muelle propio, jardin con asador. Ideal segunda residencia o alquiler temporal."
+  },
+  {
+    "id": "prop-12",
+    "titulo": "Local comercial en Palermo con deposito",
+    "precio_usd": 2200,
+    "zona": "Palermo",
+    "tipo": "local_comercial",
+    "dormitorios": 0,
+    "descripcion": "Alquiler mensual. Local de 90 m2 con deposito de 30 m2, frente sobre avenida principal, aire central, camara frigorifica incluida."
+  }
+]

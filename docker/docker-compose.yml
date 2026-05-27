@@ -1,4 +1,20 @@
 services:
+  # ── Lead Trust Copilot ─────────────────────────────────────────────────────
+  # Demo local: docker-compose up
+  # Requiere un archivo .env en la raíz del repo con ANTHROPIC_API_KEY.
+  lead-trust-copilot:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  # ── Arnés R2D2 ────────────────────────────────────────────────────────────
   harness:
     build:
       context: ..

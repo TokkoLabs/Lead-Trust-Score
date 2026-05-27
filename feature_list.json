@@ -1,6 +1,6 @@
 {
-  "project": "r2d2-harness",
-  "description": "R2D2-Harness: plantilla Harness Engineering dockerizada. Clona este repo para iniciar un producto nuevo: el codigo crece in-repo en product/ y tests/, con SDD y ciclo Docker (build, test, up, down). Al clonar, reemplaza feature_list.json con el backlog de tu producto.",
+  "project": "lead-trust-copilot",
+  "description": "Lead Trust Score + AI Lead Copilot: Plataforma agéntica para clasificar, priorizar y generar planes de acción para leads inmobiliarios basados en datos simulados.",
   "rules": {
     "one_feature_at_a_time": true,
     "require_tests_to_close": true,
@@ -11,89 +11,102 @@
   "features": [
     {
       "id": 1,
-      "name": "harness_cleanup",
-      "title": "Eliminar producto embebido",
-      "description": "Quitar src/, tests/, specs CLI y artefactos de progreso del notes-cli. Resetear progress/current.md y actualizar .gitignore.",
+      "name": "mock_data_ingest",
+      "title": "Ingesta y Estructura de Datos Sintéticos",
+      "layer": "backend",
+      "order": 1,
+      "description": "Configurar el dataset de leads y el catálogo de propiedades simuladas en formato JSON dentro de product/backend/data/, incluyendo referencias cruzadas entre leads y propiedades disponibles.",
       "acceptance": [
-        "No existen src/, tests/ ni specs/cli_*",
-        "Eliminados progress/impl_*, progress/review_*, progress/explore_*",
-        "progress/current.md contiene solo la plantilla vacía",
-        "progress/history.md tiene entrada de cierre del proyecto notes-cli",
-        ".gitignore actualizado para entorno Docker (.env, no .notes.json)"
+        "Existe product/backend/data/leads_mock.json con al menos 15 registros que incluyan: texto del mensaje, teléfono ficticio, email ficticio, zona de interés, tipo de propiedad buscada, presupuesto aproximado y un array property_ids con IDs del catálogo.",
+        "Existe product/backend/data/properties_mock.json con al menos 10 propiedades simuladas con campos: id, titulo, precio, zona, tipo, dormitorios, descripcion.",
+        "Existe product/types/lead.ts y product/types/property.ts con interfaces TypeScript que validen ambos esquemas.",
+        "tests/backend/test_data.ts comprueba que ambos datasets se parsean sin errores y que los property_ids de los leads referencian IDs válidos del catálogo."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     },
     {
       "id": 2,
-      "name": "docker_scaffold",
-      "title": "Scaffold Docker del arnés",
-      "description": "Crear docker/ con Dockerfile.harness, docker-compose.yml, .env.example y scripts build/verify/shell.",
+      "name": "ai_scoring_pipeline",
+      "title": "Pipeline de Análisis con Claude API (JSON estructurado)",
+      "layer": "backend",
+      "order": 2,
+      "description": "Implementar el API route de Next.js e integración con Claude API para procesar el lead, cruzarlo con el catálogo de propiedades y retornar el esquema estricto de scores, insights y resumen generado por IA.",
       "acceptance": [
-        "Existe docker/Dockerfile.harness con git, gh, python3, docker-cli",
-        "Existe docker/docker-compose.yml con servicio harness y socket montado",
-        "Existe docker/scripts/verify.sh con validación feature_list y archivos base",
-        "Existe docker/scripts/build.sh y docker/scripts/shell.sh",
-        "Existe docker/.env.example con PRODUCT_PATH y GITHUB_EXPECTED_USER"
+        "Existe product/backend/services/ai_analyser.ts que se conecta con Claude API usando ANTHROPIC_API_KEY desde variables de entorno (nunca hardcodeada).",
+        "El prompt del sistema fuerza output JSON estricto con los campos: trust_score (0-100), conversion_score (0-100), urgency_score (0-100), is_spam (boolean), detected_intent (string), suggested_action (string), ai_summary (string, 2-3 oraciones en español resumiendo el perfil del lead y su potencial), property_match_ids (array de IDs del catálogo que coinciden con el perfil del lead).",
+        "Existe el API route product/backend/api/leads/analyze.ts (expuesto como POST /api/leads/analyze) que recibe un ID de lead, lo cruza con el catálogo de propiedades en contexto y devuelve el JSON esperado.",
+        "tests/backend/test_ai_pipeline.ts valida que respuestas simuladas de la API no rompan el tipado y que todos los campos requeridos estén presentes."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     },
     {
       "id": 3,
-      "name": "init_host_checks",
-      "title": "Init dual host (bash + PowerShell)",
-      "description": "Reescribir init.sh y crear init.ps1: detectar SO, verificar Docker, Git, gh auth, archivos base y delegar verify al contenedor.",
+      "name": "dashboard_layout_and_feed",
+      "title": "Layout Principal y Feed de Priorización",
+      "layer": "frontend",
+      "order": 3,
+      "description": "Maquetar la estructura base del dashboard con la cola de leads entrantes ordenados por Trust Score descendente.",
       "acceptance": [
-        "init.sh detecta SO (linux, macos, windows-bash) y verifica Docker, Git, gh auth",
-        "init.ps1 equivalente para PowerShell nativo en Windows",
-        "Ambos delegan verificación a docker compose run harness verify",
-        "No requieren python3 en el host"
+        "Existe product/frontend/components/DashboardLayout.tsx con barra lateral de navegación y área de trabajo principal.",
+        "Existe product/frontend/components/LeadsFeed.tsx que renderiza la lista de leads ordenada de mayor a menor Trust Score.",
+        "Cada ítem de la lista muestra: identificador del lead, badge numérico del Trust Score con color semántico (Verde >75, Amarillo 40-75, Rojo <40) y tag de urgencia (Alta, Media, Baja).",
+        "tests/frontend/test_feed.tsx verifica que la lista se renderiza correctamente con mock data local."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     },
     {
       "id": 4,
-      "name": "docker_manager_agent",
-      "title": "Agente docker_manager",
-      "description": "Nuevo subagente para gestionar Dockerfiles, compose y scripts. Integración en leader, CLAUDE.md y hooks.",
+      "name": "lead_detail_insights",
+      "title": "Panel de Detalle y Visualización de Scores",
+      "layer": "frontend",
+      "order": 4,
+      "description": "Crear el panel interactivo que muestra la información extendida del lead seleccionado, los badges gráficos de IA, el resumen generado y las propiedades coincidentes del catálogo.",
       "acceptance": [
-        "Existe .claude/agents/docker_manager.md con responsabilidades y límites",
-        "leader.md y CLAUDE.md referencian docker_manager",
-        ".claude/settings.json usa docker compose verify en hooks"
+        "Existe product/frontend/components/LeadDetailPanel.tsx que se despliega al seleccionar un lead.",
+        "Incluye un Trust Score Badge circular o radial con color semántico (Verde >75, Amarillo 40-75, Rojo <40).",
+        "Muestra conversion_score y urgency_score como barras de progreso o badges secundarios.",
+        "Muestra el campo ai_summary como un párrafo de contexto con etiqueta 'Análisis IA'.",
+        "Existe una sección 'Acción Recomendada' con el texto de suggested_action y un botón para copiar al portapapeles.",
+        "Muestra tarjetas compactas de las propiedades del catálogo que coinciden con el lead (resolviendo property_match_ids).",
+        "Maneja estados de carga con skeleton/shimmer UI mientras espera la respuesta del pipeline."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     },
     {
       "id": 5,
-      "name": "harness_docs",
-      "title": "Documentación del arnés dockerizado",
-      "description": "README solo estructura, AGENTS.md, docs/*, CHECKPOINTS y reviewer adaptados al arnés sin producto.",
+      "name": "realtime_simulation_trigger",
+      "title": "Simulador de Entrada de Leads en Vivo",
+      "layer": "fullstack",
+      "order": 5,
+      "description": "Disparador interactivo en la UI para inyectar nuevos leads sintéticos durante la demo, incluyendo casos de spam evidentes para el wow factor.",
       "acceptance": [
-        "README.md describe solo estructura del arnés dockerizado",
-        "docs/architecture.md, conventions.md, verification.md reescritos",
-        "Existe docs/docker.md para montaje de producto externo",
-        "AGENTS.md y CHECKPOINTS.md actualizados",
-        "reviewer.md adaptado para trazabilidad vía verify.sh"
+        "Existe un panel de demo con botones 'Simular Lead Interesado' y 'Simular Lead Spam' visibles en el dashboard.",
+        "Al hacer click se ejecuta el ciclo completo: POST /api/leads/analyze → estado de carga visual → inserción animada del lead en la posición correcta de la cola según su Trust Score.",
+        "Un lead con is_spam: true se mueve automáticamente a una sección secundaria diferenciada visualmente (ícono de alerta, fondo distinto, posición al fondo de la cola)."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     },
     {
       "id": 6,
-      "name": "product_scaffold",
-      "title": "Scaffold producto in-repo",
-      "description": "Convencion product/ + tests/, Dockerfile.product, servicios app/test en compose, scripts product-build/test/up/down y docs alineados.",
+      "name": "docker_setup",
+      "title": "Docker Compose para Demo Local",
+      "layer": "fullstack",
+      "order": 6,
+      "description": "Crear el docker-compose.yml que levanta la app Next.js completa (frontend + API routes) en un único contenedor listo para demo local con un solo comando.",
       "acceptance": [
-        "Existen product/ y tests/ con .gitkeep",
-        "Existe docker/Dockerfile.product y scripts product-*.sh",
-        "docker-compose.yml tiene servicios app y test con perfil product",
-        "README y docs/docker.md describen flujo clonar plantilla y producto in-repo"
+        "Existe docker/Dockerfile que construye la app Next.js (npm run build + npm start).",
+        "Existe docker/docker-compose.yml que levanta el servicio con 'docker-compose up' y expone el puerto 3000.",
+        "ANTHROPIC_API_KEY se inyecta desde un archivo .env en la raíz del proyecto sin hardcodearla en el Dockerfile.",
+        "Existe un .env.example con las variables necesarias documentadas.",
+        "El README documenta los pasos exactos para levantar el demo desde cero en una máquina limpia."
       ],
       "sdd": true,
-      "status": "done"
+      "status": "spec_ready"
     }
   ]
 }
