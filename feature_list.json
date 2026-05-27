@@ -107,6 +107,66 @@
       ],
       "sdd": true,
       "status": "spec_ready"
+    },
+    {
+      "id": 19,
+      "name": "deliverable_video_demo",
+      "title": "Entregable hackaton — Video demo del producto",
+      "layer": "docs",
+      "order": 19,
+      "description": "Grabar un video MP4 de 2 a 4 minutos mostrando el producto Lead Trust Copilot funcionando end-to-end con narrativa: ingreso de leads simulados, scoring de IA, dashboard priorizado, panel de detalle y simulador en vivo.",
+      "acceptance": [
+        "Existe el archivo deliverables/demo.mp4 commiteado en el repo (usar git-lfs si supera 50MB).",
+        "Duración del video entre 120 y 240 segundos (verificable con 'ffprobe deliverables/demo.mp4' o equivalente).",
+        "El video muestra al menos: (1) la home del dashboard con leads priorizados por Trust Score, (2) selección de un lead y panel de detalle con ai_summary y suggested_action, (3) uso del simulador en vivo con al menos un lead interesado y uno spam, (4) la app corriendo en localhost:3000 desde 'docker compose up'.",
+        "El video incluye narración (voz o subtítulos) que cuenta el problema, la solución y el wow factor.",
+        "deliverables/README.md (o entrada equivalente en README raíz) lista el video con su duración y un resumen de 2-3 oraciones de lo que muestra."
+      ],
+      "sdd": false,
+      "status": "in_progress"
+    },
+    {
+      "id": 20,
+      "name": "deliverable_readme",
+      "title": "Entregable hackaton — README.md del proyecto",
+      "layer": "docs",
+      "order": 20,
+      "description": "Completar el README.md de la raíz del repo con qué construyeron, cómo se corre la demo desde cero, el link al repositorio de GitHub, y una explicación didáctica del proceso de desarrollo con Harness Engineering + SDD: estructura del repo, punto de entrada, skill feature-list, agentes (leader/implementers/reviewers) y arquitectura del backend.",
+      "acceptance": [
+        "README.md en la raíz del repo cubre, en este orden, las secciones: '1. Qué es Lead Trust Copilot', '2. Stack', '3. Cómo se corre' (quickstart), '4. Estructura del repo', '5. Cómo desarrollamos: Harness Engineering + SDD', '6. Arquitectura del backend', '7. Entregables', '8. Link al repo'.",
+        "Sección 1 'Qué es': 2-4 oraciones describiendo el producto (clasificación y priorización de leads inmobiliarios con scoring de IA y plan de acción sugerido).",
+        "Sección 2 'Stack': lista de tecnologías con versión — Next.js 16 (Pages Router), React 19, TypeScript, Tailwind, Claude API (@anthropic-ai/sdk), Docker + docker-compose, Jest + ts-jest para tests.",
+        "Sección 3 'Cómo se corre' (quickstart en una máquina limpia): git clone → cp .env.example .env → editar ANTHROPIC_API_KEY → docker compose -f docker/docker-compose.yml up lead-trust-copilot → abrir http://localhost:3000. Tiempo estimado del primer build (~10 min).",
+        "Sección 4 'Estructura del repo': tabla o lista con las carpetas top-level y su rol — product/ (backend + frontend + types), pages/ (Next.js routes), docker/, specs/, progress/, .claude/agents/, skills/, docs/, feature_list.json, init.sh / init.ps1. Una línea por entrada explicando qué vive ahí.",
+        "Sección 5 'Cómo desarrollamos: Harness Engineering + SDD' explica didácticamente: (5.1) qué es Harness Engineering en una oración, (5.2) qué es SDD (Spec Driven Development) y por qué la puerta humana entre spec_ready e in_progress, (5.3) punto de entrada — al abrir el repo con Claude Code se carga CLAUDE.md que pone a Claude en rol leader y le hace ejecutar init.sh para verificar entorno, (5.4) ciclo completo de una feature con diagrama o flecha: pending → [spec_author] → spec_ready → ⏸ humano aprueba → in_progress → [implementer_* + docker_manager] → [reviewer_*] → done, (5.5) cómo se usa el skill feature-list para definir el backlog (referenciar skills/feature-list/SKILL.md y mostrar mini-ejemplo de una entrada de feature), (5.6) cómo trabajan los agentes: el leader NO escribe código, solo lanza subagentes; spec_author redacta specs/<name>/{requirements,design,tasks}.md; backend_implementer / frontend_implementer / implementer escriben código en product/ Y tests en tests/ junto a la implementación; docker_manager gestiona Dockerfiles y compose; backend_reviewer / frontend_reviewer / reviewer validan trazabilidad task→requirement antes de cerrar; (5.7) cómo se crean los tests dentro del SDD: NO los escribe el reviewer (no edita código), los escribe el implementer durante la implementación bajo tests/backend/ o tests/frontend/; cada requirement R<n> de requirements.md debe tener al menos un test que lo cubra; el implementer documenta la trazabilidad R<n> → archivo:test en progress/impl_<feature>.md; el reviewer entonces ejecuta ./docker/scripts/product-test.sh (o init.sh para el arnés), verifica que cada R<n> tenga evidencia concreta y rechaza si falta cobertura; la regla 'require_tests_to_close': true en feature_list.json hace cumplir esto a nivel de proceso: sin tests verdes la feature no llega a done. (5.8) regla anti-teléfono-descompuesto — los subagentes escriben sus resultados en archivos (progress/impl_<feature>.md, progress/review_<feature>.md, specs/<feature>/) y solo devuelven la referencia, no el contenido.",
+        "Sección 6 'Arquitectura del backend' explica: (6.1) Next.js Pages Router con API routes bajo pages/api/ que delega a product/backend/, (6.2) endpoint POST /api/leads/analyze recibe un leadId, cruza el lead con el catálogo de propiedades mock y llama a product/backend/services/ai_analyser.ts, (6.3) ai_analyser.ts invoca Claude API con system prompt que fuerza JSON estricto (trust_score, conversion_score, urgency_score, is_spam, suggested_action, ai_summary, property_match_ids), (6.4) data layer en product/backend/data/ con leads_mock.json y properties_mock.json (sin DB para el hackaton), (6.5) tipos compartidos en product/types/ (lead.ts, property.ts, lead_analysis.ts) para garantizar contrato entre frontend y backend, (6.6) ANTHROPIC_API_KEY se inyecta desde .env en runtime, nunca hardcodeada ni baked en la imagen Docker.",
+        "Sección 7 'Entregables': links relativos a deliverables/demo.mp4 y AI_USAGE.md con una línea de descripción cada uno.",
+        "Sección 8 'Link al repo': URL completa de GitHub (https://github.com/<owner>/<repo>).",
+        "Cada referencia a un archivo o ruta del repo en el README es un link relativo válido (AGENTS.md, CLAUDE.md, skills/feature-list/SKILL.md, .claude/agents/leader.md, etc.) y no está roto.",
+        "Mantener el README anterior del arnés en docs/harness-readme.md para no perder la documentación original del template R2D2-Harness.",
+        "Idioma del README: español (consistente con el resto de la documentación del repo)."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 21,
+      "name": "deliverable_ai_usage",
+      "title": "Entregable hackaton — AI_USAGE.md",
+      "layer": "docs",
+      "order": 21,
+      "description": "Crear AI_USAGE.md en la raíz del repo documentando el stack de IA, arquitectura de uso (IA en runtime del producto vs IA en proceso de desarrollo), patrones avanzados aplicados, decisiones y aprendizajes.",
+      "acceptance": [
+        "Existe AI_USAGE.md en la raíz del repo con las 5 secciones requeridas por el enunciado: 'Stack de IA', 'Arquitectura del uso (runtime vs dev)', 'Patrones avanzados', 'Decisiones', 'Aprendizajes'.",
+        "'Stack de IA' lista los modelos y SDKs usados: Claude API (modelo concreto), @anthropic-ai/sdk en backend, y Claude Code + subagentes del arnés en desarrollo.",
+        "'Arquitectura del uso' distingue claramente: (a) IA en runtime — POST /api/leads/analyze invoca Claude para scoring/insights de cada lead; (b) IA en proceso de dev — leader + spec_author + implementers + reviewers vía SDD para construir el producto.",
+        "'Patrones avanzados' documenta al menos: JSON estructurado forzado por system prompt en /api/leads/analyze, separación de orquestación (leader) e implementación (subagentes), regla anti-teléfono-descompuesto (subagentes escriben en archivos), modo mock SMOKE_MOCK_AI para CI sin credenciales (si se mantiene).",
+        "'Decisiones' explica al menos 3 trade-offs reales tomados durante el hackaton (p. ej. JSON estricto vs free-form, Pages Router vs App Router, monolito Next.js vs servicios separados).",
+        "'Aprendizajes' captura 3-5 insights honestos del equipo sobre trabajar con IA en runtime y como copiloto de desarrollo.",
+        "El documento es honesto: si una decisión no salió bien o un patrón no se usó como estaba planeado, se documenta."
+      ],
+      "sdd": false,
+      "status": "done"
     }
   ]
 }

@@ -1,2 +1,6 @@
 # Shell scripts use LF line endings
 *.sh text eol=lf
+
+# Demo video tracked with git-lfs (feature 7 deliverable_video_demo).
+# Requires `git lfs install` on the contributor's machine before committing the MP4.
+deliverables/*.mp4 filter=lfs diff=lfs merge=lfs -text
