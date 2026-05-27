@@ -1,0 +1,113 @@
+/* ─── Tokko Design System — tokens ─────────────────────────────────────
+ * Fuente de verdad: ui-ux/lead-trust-dashboard-tokko (3).html (líneas 11-117)
+ * Esta es la ÚNICA fuente de verdad para los CSS custom properties Tokko.
+ * Cualquier cambio de tokens del diseñador se aplica acá y se propaga
+ * automáticamente vía var() a Tailwind (tailwind.config.js) y a globals.css.
+ * ────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Brand */
+  --color-brand-primary-100:    #FACECF;
+  --color-brand-primary-500:    #DF1517;
+  --color-brand-primary-500-15: rgba(223,21,23,0.15);
+  --color-brand-primary-700:    #9C0F10;
+  --color-brand-secondary-500:  #427F94;
+  --color-brand-secondary-700:  #275C6D;
+  --color-brand-secondary-high: #1A4958;
+
+  /* Neutral */
+  --color-neutral-grey-50:  #FBFCFC;
+  --color-neutral-grey-100: #F3F6F8;
+  --color-neutral-grey-200: #EAEEF1;
+  --color-neutral-grey-300: #D6DEE2;
+  --color-neutral-grey-400: #C2CCD3;
+  --color-neutral-grey-500: #94A2AB;
+  --color-neutral-grey-600: #6A7981;
+  --color-neutral-grey-700: #4D5A61;
+  --color-neutral-grey-800: #2E393F;
+  --color-neutral-grey-900: #1D2327;
+  --color-neutral-white:    #FFFFFF;
+
+  /* Surfaces */
+  --color-surface-neutral-ground:  #FFFFFF;
+  --color-surface-neutral-low:     #F3F6F8;
+  --color-surface-neutral-medium:  #EAEEF1;
+  --color-surface-neutral-high:    #D6DEE2;
+
+  /* Feedback */
+  --color-feedback-green-50:       #E1FAF4;
+  --color-feedback-green-500:      #189C7B;
+  --color-feedback-green-500-15:   rgba(24,156,123,0.15);
+  --color-feedback-yellow-50:      #FEFAEA;
+  --color-feedback-yellow-500:     #F3CE29;
+  --color-feedback-yellow-500-15:  rgba(243,206,41,0.15);
+  --color-feedback-blue-500:       #007DDD;
+  --color-feedback-blue-500-15:    rgba(0,125,221,0.15);
+  --color-feedback-blue-600:       #0066B4;
+
+  /* Semantic surface extras */
+  --color-surface-success-low:  var(--color-feedback-green-50);
+  --color-surface-success-high: var(--color-feedback-green-500);
+  --color-surface-warning-low:  var(--color-feedback-yellow-50);
+  --color-surface-warning-high: var(--color-feedback-yellow-500);
+  --color-surface-danger-low:   #FEF2F2;
+  --color-surface-danger-high:  var(--color-brand-primary-500);
+
+  /* Borders */
+  --color-border-neutral: #D6DEE2;
+  --color-border-primary: var(--color-brand-primary-500);
+
+  /* States */
+  --color-state-hover: #EAEEF1;
+
+  /* Typography — Nunito Sans, base 15px */
+  --font-family-base:        'Nunito Sans', system-ui, sans-serif;
+  --font-weight-regular:     400;
+  --font-weight-semi:        600;
+  --font-weight-bold:        700;
+  --tracking-normal:         0px;
+  --tracking-tight:          -0.4px;
+  --tracking-compact:        -0.56px;
+
+  /* Type scale */
+  --fs-title-lg: 28px;  --lh-title-lg: 32px;
+  --fs-title-md: 24px;  --lh-title-md: 28px;
+  --fs-title-sm: 20px;  --lh-title-sm: 24px;
+  --fs-body-lg:  18px;  --lh-body-lg:  24px;
+  --fs-body-md:  15px;  --lh-body-md:  20px;
+  --fs-body-sm:  14px;
+  --fs-body-xs:  12px;  --lh-body-xs:  16px;
+  --fs-caption:  11px;  --lh-caption:  16px;
+
+  /* Input tokens */
+  --input-radius:    8px;
+  --input-py:        12px;
+  --input-px:        16px;
+  --input-gap:       8px;
+  --input-label-gap: 4px;
+
+  /* Component radius */
+  --radius-card:   16px;
+  --radius-button: 8px;
+  --radius-chip:   6px;
+  --radius-pill:   1000px;
+
+  /* Spacing */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+
+  /* Shadows (DS Elevation tokens) */
+  --shadow-low:  0 0 0 rgba(95,99,120,.10), 0 0 5px rgba(95,99,120,.10);
+  --shadow-top:  0 -1px 15px rgba(95,99,120,.10), 0 -4px 10px rgba(95,99,120,.05);
+  --shadow-left: 0 0 0 rgba(95,99,120,.10), 0 0 5px rgba(95,99,120,.10);
+
+  /* Topbar */
+  --topbar-bg:     var(--color-brand-secondary-high);
+  --topbar-height: 56px;
+
+  /* Left rail */
+  --rail-width: 80px;
+  --rail-bg:    var(--color-surface-neutral-ground);
+
+  /* Right rail */
+  --right-rail-width: 48px;
+}

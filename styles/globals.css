@@ -1,3 +1,12 @@
+@import "../product/frontend/styles/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: var(--color-surface-neutral-low);
+  color: var(--color-neutral-grey-800);
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+}

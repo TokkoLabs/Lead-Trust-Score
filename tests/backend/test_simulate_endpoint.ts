@@ -1,8 +1,12 @@
 /**
  * tests/backend/test_simulate_endpoint.ts
- * Tests para el handler POST /api/leads/simulate.
- * Mock de analyseLeadWithAI — sin llamadas reales a Claude API.
- * Cubre: R1, R2, R3, R4, R5, R6, R7, R20
+ * Tests para el handler POST /api/leads/simulate (contrato legacy).
+ *
+ * Verifica que tras la feature 18 (unified_random_lead_simulator) el
+ * endpoint sigue aceptando `type='interested'` y `type='spam'` y devuelve
+ * `{ lead, analysis }`. Los asserts se ajustan a la nueva implementación,
+ * que toma los atributos del lead desde los pools de
+ * `product/backend/lib/leadGenerators.ts` (feature 10).
  */
 
 // Patch ANTHROPIC_API_KEY antes de que cualquier modulo lo lea
@@ -21,8 +25,14 @@ import {
   filterCandidateProperties,
 } from "../../product/backend/services/ai_analyser";
 import type { LeadAnalysis } from "../../product/types/lead_analysis";
+import {
+  ZONAS_POOL,
+  MENSAJES_INTERESTED_POOL,
+  MENSAJES_SPAM_POOL,
+  PRESUPUESTOS_POOL,
+  SOURCES_POOL,
+} from "../../product/backend/lib/leadGenerators";
 
-// Fixture de LeadAnalysis para leads interesados
 const INTERESTED_ANALYSIS_FIXTURE: LeadAnalysis = {
   trust_score: 88,
   conversion_score: 82,
@@ -35,7 +45,6 @@ const INTERESTED_ANALYSIS_FIXTURE: LeadAnalysis = {
   property_match_ids: ["prop-01", "prop-07"],
 };
 
-// Fixture de LeadAnalysis para spam
 const SPAM_ANALYSIS_FIXTURE: LeadAnalysis = {
   trust_score: 5,
   conversion_score: 2,
@@ -43,14 +52,14 @@ const SPAM_ANALYSIS_FIXTURE: LeadAnalysis = {
   is_spam: true,
   detected_intent: "Intencion vaga o inexistente",
   suggested_action: "Descartar lead como spam.",
-  ai_summary: "El lead presenta multiples senales de spam: email temporal, telefono invalido y mensaje sin contexto.",
+  ai_summary:
+    "El lead presenta multiples senales de spam: email temporal, telefono invalido y mensaje sin contexto.",
   property_match_ids: [],
 };
 
-// Helper: crear mock de NextApiRequest
 function makeReq(
   method: string,
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
 ): NextApiRequest {
   return {
     method,
@@ -60,7 +69,6 @@ function makeReq(
   } as unknown as NextApiRequest;
 }
 
-// Helper: crear mock de NextApiResponse con captura de status y json
 function makeRes() {
   let capturedStatus = 200;
   let capturedBody: unknown = null;
@@ -101,7 +109,7 @@ beforeEach(() => {
   mockFilterCandidateProperties.mockReturnValue([]);
 });
 
-// R1, R2, R6, R20: type "interested" → HTTP 200 con lead y analysis
+// type='interested' → HTTP 200 con lead y analysis; campos del lead derivados de pools.
 test("returns_200_with_lead_and_analysis_for_interested", async () => {
   mockAnalyseLeadWithAI.mockResolvedValue(INTERESTED_ANALYSIS_FIXTURE);
 
@@ -115,26 +123,36 @@ test("returns_200_with_lead_and_analysis_for_interested", async () => {
   expect(body).toHaveProperty("lead");
   expect(body).toHaveProperty("analysis");
 
-  // R2: Verificar campos del lead interesado
   const lead = body.lead as Record<string, unknown>;
-  expect(lead.id).toMatch(/^sim-\d+$/);
-  expect(typeof lead.mensaje).toBe("string");
-  expect((lead.mensaje as string).length).toBeGreaterThanOrEqual(120);
-  expect(lead.email).toMatch(/@(gmail\.com|hotmail\.com)$/);
+  expect(typeof lead.id).toBe("string");
+  expect((lead.id as string).startsWith("sim-")).toBe(true);
+
+  // Mensaje pertenece al pool interested
+  expect(MENSAJES_INTERESTED_POOL).toContain(lead.mensaje);
+
+  // Email gmail (interested usa @gmail.com)
+  expect(lead.email).toMatch(/@gmail\.com$/);
+
+  // Telefono argentino válido
   expect(lead.telefono).toMatch(/^\+54 9 11 \d{4}-\d{4}$/);
-  expect(lead.zona).toBe("Palermo");
-  expect(lead.tipo_propiedad).toBe("departamento");
-  expect(lead.presupuesto_usd).toBeGreaterThanOrEqual(150000);
-  expect(lead.presupuesto_usd).toBeLessThanOrEqual(500000);
+
+  // Zona pertenece al pool
+  expect(ZONAS_POOL).toContain(lead.zona);
+
+  // Presupuesto pertenece al pool
+  expect(PRESUPUESTOS_POOL).toContain(lead.presupuesto_usd);
+
+  // Source pertenece al pool
+  expect(SOURCES_POOL).toContain(lead.source);
+
   expect(Array.isArray(lead.property_ids)).toBe(true);
 
-  // R6: analysis presente y con campos correctos
   const analysis = body.analysis as Record<string, unknown>;
   expect(analysis.trust_score).toBe(88);
   expect(analysis.is_spam).toBe(false);
 });
 
-// R1, R3, R6, R20: type "spam" → HTTP 200 con lead spam y analysis
+// type='spam' → HTTP 200 con lead spam y analysis; campos del lead derivados de pools de spam.
 test("returns_200_with_lead_and_analysis_for_spam", async () => {
   mockAnalyseLeadWithAI.mockResolvedValue(SPAM_ANALYSIS_FIXTURE);
 
@@ -148,24 +166,28 @@ test("returns_200_with_lead_and_analysis_for_spam", async () => {
   expect(body).toHaveProperty("lead");
   expect(body).toHaveProperty("analysis");
 
-  // R3: Verificar campos del lead spam
   const lead = body.lead as Record<string, unknown>;
-  expect(lead.id).toMatch(/^sim-\d+$/);
-  expect(typeof lead.mensaje).toBe("string");
-  expect((lead.mensaje as string).length).toBeLessThan(30);
-  expect(lead.email).toMatch(/@(tempmail\.org|guerrillamail\.com|mailinator\.com)$/);
+  expect(typeof lead.id).toBe("string");
+  expect((lead.id as string).startsWith("sim-")).toBe(true);
+
+  // Mensaje pertenece al pool spam (mensajes cortos / sin contexto)
+  expect(MENSAJES_SPAM_POOL).toContain(lead.mensaje);
+
+  // Email tempmail (spam usa @tempmail.org)
+  expect(lead.email).toMatch(/@tempmail\.org$/);
+
+  // Telefono inválido fijo para spam
   expect(lead.telefono).toBe("000-0000");
-  expect(lead.zona).toBe("");
-  expect(lead.tipo_propiedad).toBeNull();
+
+  // Presupuesto siempre 0 para spam
   expect(lead.presupuesto_usd).toBe(0);
 
-  // R6: analysis presente
   const analysis = body.analysis as Record<string, unknown>;
   expect(analysis.is_spam).toBe(true);
   expect(analysis.trust_score).toBe(5);
 });
 
-// R4, R20: type invalido → HTTP 400
+// type inválido → HTTP 400 (mensaje actualizado para los 3 tipos)
 test("returns_400_for_invalid_type", async () => {
   const req = makeReq("POST", { type: "unknown" });
   const res = makeRes();
@@ -174,23 +196,26 @@ test("returns_400_for_invalid_type", async () => {
 
   expect(res.getStatus()).toBe(400);
   const body = res.getBody() as { error: string };
-  expect(body.error).toBe("type must be 'interested' or 'spam'");
+  expect(body.error).toContain("type must be");
   expect(mockAnalyseLeadWithAI).not.toHaveBeenCalled();
 });
 
-// R4, R20: type ausente → HTTP 400
-test("returns_400_when_type_is_missing", async () => {
+// Sin body ahora devuelve 200 con type='random' (default introducido por feature 18).
+test("returns_200_when_type_is_missing_default_random", async () => {
+  mockAnalyseLeadWithAI.mockResolvedValue(INTERESTED_ANALYSIS_FIXTURE);
+
   const req = makeReq("POST", {});
   const res = makeRes();
 
   await handler(req, res);
 
-  expect(res.getStatus()).toBe(400);
-  const body = res.getBody() as { error: string };
-  expect(body.error).toBe("type must be 'interested' or 'spam'");
+  expect(res.getStatus()).toBe(200);
+  const body = res.getBody() as { lead: unknown; analysis: unknown };
+  expect(body).toHaveProperty("lead");
+  expect(body).toHaveProperty("analysis");
 });
 
-// R5, R20: metodo GET → HTTP 405
+// Metodo GET → HTTP 405
 test("returns_405_for_GET_method", async () => {
   const req = makeReq("GET", {});
   const res = makeRes();
@@ -203,10 +228,10 @@ test("returns_405_for_GET_method", async () => {
   expect(mockAnalyseLeadWithAI).not.toHaveBeenCalled();
 });
 
-// R7, R20: analyseLeadWithAI lanza excepcion → HTTP 500
+// analyseLeadWithAI lanza excepcion → HTTP 500
 test("returns_500_when_analyseLeadWithAI_throws", async () => {
   mockAnalyseLeadWithAI.mockRejectedValue(
-    new Error("Claude API connection failed")
+    new Error("Claude API connection failed"),
   );
 
   const req = makeReq("POST", { type: "interested" });

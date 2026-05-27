@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeadTrust — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300;0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ─── Tokko Design System — tokens ─────────────────────────────── */
+:root {
+  /* Brand */
+  --color-brand-primary-100:    #FACECF;
+  --color-brand-primary-500:    #DF1517;
+  --color-brand-primary-500-15: rgba(223,21,23,0.15);
+  --color-brand-primary-700:    #9C0F10;
+  --color-brand-secondary-500:  #427F94;
+  --color-brand-secondary-700:  #275C6D;
+  --color-brand-secondary-high: #1A4958;   /* nav_superior bg — from Figma */
+
+  /* Neutral */
+  --color-neutral-grey-50:  #FBFCFC;
+  --color-neutral-grey-100: #F3F6F8;
+  --color-neutral-grey-200: #EAEEF1;
+  --color-neutral-grey-300: #D6DEE2;
+  --color-neutral-grey-400: #C2CCD3;
+  --color-neutral-grey-500: #94A2AB;
+  --color-neutral-grey-600: #6A7981;
+  --color-neutral-grey-700: #4D5A61;
+  --color-neutral-grey-800: #2E393F;
+  --color-neutral-grey-900: #1D2327;
+  --color-neutral-white:    #FFFFFF;
+
+  /* Surfaces */
+  --color-surface-neutral-ground:  #FFFFFF;
+  --color-surface-neutral-low:     #F3F6F8;   /* page background */
+  --color-surface-neutral-medium:  #EAEEF1;
+  --color-surface-neutral-high:    #D6DEE2;
+
+  /* Feedback */
+  --color-feedback-green-50:       #E1FAF4;
+  --color-feedback-green-500:      #189C7B;
+  --color-feedback-green-500-15:   rgba(24,156,123,0.15);
+  --color-feedback-yellow-50:      #FEFAEA;
+  --color-feedback-yellow-500:     #F3CE29;
+  --color-feedback-yellow-500-15:  rgba(243,206,41,0.15);
+  --color-feedback-blue-500:       #007DDD;
+  --color-feedback-blue-500-15:    rgba(0,125,221,0.15);
+  --color-feedback-blue-600:       #0066B4;
+
+  /* Semantic surface extras */
+  --color-surface-success-low:  var(--color-feedback-green-50);
+  --color-surface-success-high: var(--color-feedback-green-500);
+  --color-surface-warning-low:  var(--color-feedback-yellow-50);
+  --color-surface-warning-high: var(--color-feedback-yellow-500);
+  --color-surface-danger-low:   #FEF2F2;
+  --color-surface-danger-high:  var(--color-brand-primary-500);
+
+  /* Borders */
+  --color-border-neutral: #D6DEE2;
+  --color-border-primary: var(--color-brand-primary-500);
+
+  /* States */
+  --color-state-hover: #EAEEF1;
+
+  /* Typography — Nunito Sans, base 15px */
+  --font-family-base:        'Nunito Sans', system-ui, sans-serif;
+  --font-weight-regular:     400;
+  --font-weight-semi:        600;
+  --font-weight-bold:        700;
+  --tracking-normal:         0px;
+  --tracking-tight:          -0.4px;
+  --tracking-compact:        -0.56px;
+
+  /* Type scale */
+  --fs-title-lg: 28px;  --lh-title-lg: 32px;
+  --fs-title-md: 24px;  --lh-title-md: 28px;
+  --fs-title-sm: 20px;  --lh-title-sm: 24px;
+  --fs-body-lg:  18px;  --lh-body-lg:  24px;
+  --fs-body-md:  15px;  --lh-body-md:  20px;
+  --fs-body-sm:  14px;  /* input placeholder size in DS */
+  --fs-body-xs:  12px;  --lh-body-xs:  16px;
+  --fs-caption:  11px;  --lh-caption:  16px;
+
+  /* Input tokens */
+  --input-radius:   8px;
+  --input-py:       12px;
+  --input-px:       16px;
+  --input-gap:      8px;
+  --input-label-gap: 4px;
+
+  /* Component radius */
+  --radius-card:   16px;   /* from DS border-radius-medium */
+  --radius-button: 8px;
+  --radius-chip:   6px;
+  --radius-pill:   1000px;
+
+  /* Spacing */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+
+  /* Shadows (from DS Elevation tokens) */
+  --shadow-low:  0 0 0 rgba(95,99,120,.10), 0 0 5px rgba(95,99,120,.10);        /* Elevation/Bottom/Low */
+  --shadow-top:  0 -1px 15px rgba(95,99,120,.10), 0 -4px 10px rgba(95,99,120,.05); /* Elevation/Top/Medium */
+  --shadow-left: 0 0 0 rgba(95,99,120,.10), 0 0 5px rgba(95,99,120,.10);
+
+  /* Topbar */
+  --topbar-bg:     var(--color-brand-secondary-high);  /* #1A4958 */
+  --topbar-height: 56px;
+
+  /* Left rail */
+  --rail-width:  80px;
+  --rail-bg:     var(--color-surface-neutral-ground);
+
+  /* Right rail */
+  --right-rail-width: 48px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--color-neutral-grey-50);   /* outer canvas #FBFCFC */
+  color: var(--color-neutral-grey-800);
+  font-family: var(--font-family-base);
+  font-size: 14px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Shell — exactly mirrors the DS "Mixed layout" ────────────── */
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-surface-neutral-low);
+}
+
+/* ─── Topbar (nav_superior) ──── bg #1A4958, h=56px ─────────────  */
+.topbar {
+  height: var(--topbar-height);
+  background: var(--topbar-bg);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-8);
+  padding: 10px var(--sp-6) 10px 56px;
+  flex-shrink: 0;
+  z-index: 20;
+  border-radius: 0 0 24px 24px;   /* DS: rounded-bl/br 24px on topbar */
+}
+
+.topbar-logo {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.02em;
+  color: var(--color-neutral-white); white-space: nowrap; flex-shrink: 0;
+}
+.topbar-logo-mark {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: var(--color-brand-primary-500);
+  display: flex; align-items: center; justify-content: center;
+}
+.topbar-logo-mark svg { width: 14px; height: 14px; fill: white; }
+.topbar-logo span { color: var(--color-brand-primary-100); }
+
+.topbar-search {
+  flex: 1; max-width: 856px;
+  background: white;
+  border-radius: var(--radius-button);
+  height: 32px;
+  display: flex; align-items: center;
+  padding: 0 12px; gap: var(--sp-6);
+  font-size: var(--fs-body-xs);
+}
+.topbar-search-icon { width: 12px; height: 12px; opacity: .5; flex-shrink: 0; }
+.topbar-search-placeholder {
+  color: var(--color-neutral-grey-600); font-size: 12px;
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.topbar-right { display: flex; align-items: center; gap: var(--sp-6); flex-shrink: 0; margin-left: auto; }
+.topbar-icon-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-chip);
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer; color: white; position: relative;
+  transition: background 0.15s;
+}
+.topbar-icon-btn:hover { background: rgba(255,255,255,.1); }
+.topbar-badge {
+  position: absolute; top: 0; right: 0;
+  background: var(--color-brand-primary-500);
+  color: white; font-size: 10px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: var(--radius-pill);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 var(--sp-1);
+}
+.topbar-user { display: flex; align-items: center; gap: 10px; }
+.topbar-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--color-brand-primary-100);
+  font-size: 10px; font-weight: 700; color: var(--color-brand-primary-700);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.topbar-username {
+  font-size: var(--fs-body-sm); font-weight: 700;
+  color: var(--color-neutral-grey-100); white-space: nowrap;
+}
+
+/* ─── Body row (rail + content + right rail) ─────────────────────  */
+.body-row {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─── Left rail (Left menu) ── white, 80px, shadow ──────────────  */
+.rail {
+  width: var(--rail-width);
+  background: var(--color-surface-neutral-ground);
+  box-shadow: var(--shadow-low);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 140px var(--sp-6) var(--sp-6);
+  gap: var(--sp-8);
+  flex-shrink: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+.rail-primary-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-chip);
+  background: var(--color-brand-primary-500);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.rail-primary-btn:hover { opacity: 0.88; }
+.rail-nav {
+  display: flex; flex-direction: column; gap: var(--sp-2);
+  align-items: center; width: 100%;
+}
+.rail-item {
+  width: 32px; height: 32px; border-radius: var(--radius-chip);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--color-neutral-grey-500);
+  transition: all 0.15s; position: relative;
+}
+.rail-item:hover { background: var(--color-state-hover); color: var(--color-neutral-grey-800); }
+.rail-item.active { background: var(--color-brand-primary-500-15); color: var(--color-brand-primary-500); }
+.rail-item svg { width: 16px; height: 16px; }
+.rail-badge {
+  position: absolute; top: 0; right: 0;
+  background: var(--color-brand-primary-500);
+  color: white; font-size: 9px; font-weight: 700;
+  min-width: 14px; height: 14px; border-radius: var(--radius-pill);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+}
+
+/* ─── Main content area ──────────────────────────────────────────  */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-top: var(--sp-6);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  position: relative;
+}
+
+/* ─── Page header ─── white, border-bottom, radius top ──────────  */
+.page-header {
+  background: var(--color-surface-neutral-ground);
+  border-bottom: 1px solid var(--color-border-neutral);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  padding: var(--sp-8) var(--sp-6) var(--sp-6);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-shrink: 0;
+}
+.page-header-left { display: flex; flex-direction: column; gap: var(--sp-2); }
+.breadcrumb {
+  display: flex; align-items: center; gap: var(--sp-1);
+  font-size: var(--fs-body-xs); font-weight: var(--font-weight-semi);
+  color: var(--color-neutral-grey-800);
+}
+.breadcrumb svg { width: 16px; height: 16px; }
+.page-title {
+  font-size: var(--fs-title-md); font-weight: var(--font-weight-bold);
+  line-height: var(--lh-title-md); letter-spacing: var(--tracking-tight);
+  color: var(--color-neutral-grey-800);
+}
+.page-sub {
+  font-size: var(--fs-body-md); line-height: var(--lh-body-md);
+  color: var(--color-neutral-grey-600); font-weight: var(--font-weight-regular);
+}
+.page-header-right { display: flex; align-items: center; gap: var(--sp-2); }
+
+/* Buttons — DS button_default */
+.btn-primary {
+  background: var(--color-brand-primary-500); color: white;
+  border: none; border-radius: var(--radius-button);
+  padding: 12px 20px; font-family: var(--font-family-base);
+  font-size: var(--fs-body-sm); font-weight: var(--font-weight-bold);
+  line-height: var(--lh-body-md); cursor: pointer; transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-secondary {
+  background: none; color: var(--color-neutral-grey-800);
+  border: 1px solid var(--color-border-neutral); border-radius: var(--radius-button);
+  padding: 12px 20px; font-family: var(--font-family-base);
+  font-size: var(--fs-body-sm); font-weight: var(--font-weight-bold);
+  line-height: var(--lh-body-md); cursor: pointer; transition: all 0.15s;
+}
+.btn-secondary:hover { background: var(--color-state-hover); }
+
+/* Tabs inside header */
+.tabs {
+  display: flex; background: var(--color-surface-neutral-ground);
+  border: 1px solid var(--color-border-neutral);
+  border-radius: var(--radius-chip); overflow: hidden;
+  padding: 3px; gap: 2px;
+}
+.tab {
+  padding: 5px 14px; font-size: 12px; font-weight: var(--font-weight-semi);
+  cursor: pointer; color: var(--color-neutral-grey-600);
+  transition: all 0.15s; border-radius: 4px; border: none; background: none;
+  font-family: var(--font-family-base);
+}
+.tab.active { background: var(--color-surface-neutral-medium); color: var(--color-neutral-grey-800); }
+
+/* ─── Page content scroll ────────────────────────────────────────  */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-surface-neutral-ground);
+  padding: var(--sp-6);
+  display: flex; flex-direction: column; gap: var(--sp-5);
+}
+
+/* Page views */
+.page-view { display: none; flex-direction: column; gap: var(--sp-5); }
+.page-view.active { display: flex; }
+
+/* ─── Bottom bar ─── white, top shadow, radius top ───────────────  */
+.bottom-bar {
+  background: var(--color-surface-neutral-ground);
+  box-shadow: var(--shadow-top);
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  height: 72px;
+  display: flex; align-items: center;
+  padding: 12px var(--sp-8);
+  gap: var(--sp-6);
+  flex-shrink: 0;
+  z-index: 5;
+}
+.bottom-bar-section { display: flex; align-items: center; gap: var(--sp-2); }
+.bottom-bar-divider { width: 1px; height: 32px; background: var(--color-border-neutral); flex-shrink: 0; }
+.bottom-bar-count {
+  font-size: var(--fs-title-lg); font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-compact); line-height: var(--lh-title-lg);
+  color: var(--color-neutral-grey-800);
+}
+.bottom-bar-label { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--color-neutral-grey-600); }
+.bb-icon-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-button);
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  color: var(--color-neutral-grey-600); transition: background 0.15s;
+}
+.bb-icon-btn:hover { background: var(--color-state-hover); color: var(--color-neutral-grey-800); }
+.bb-icon-btn svg { width: 16px; height: 16px; }
+.bb-live { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-feedback-green-500); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+.bb-live-label { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-feedback-green-500); }
+.bb-live-badge {
+  background: var(--color-feedback-green-500-15); color: var(--color-feedback-green-500);
+  font-size: 11px; font-weight: var(--font-weight-semi);
+  padding: 3px 10px; border-radius: var(--radius-pill);
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ─── Right rail ─────────────────────────────────────────────────  */
+.right-rail {
+  width: var(--right-rail-width);
+  background: var(--color-surface-neutral-ground);
+  box-shadow: var(--shadow-left);
+  border-radius: 10px 0 0 10px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: var(--sp-6) var(--sp-2); gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  flex-shrink: 0; z-index: 10;
+}
+.right-rail-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-chip);
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  color: var(--color-neutral-grey-500); transition: all 0.15s;
+}
+.right-rail-btn:hover { background: var(--color-state-hover); color: var(--color-neutral-grey-800); }
+.right-rail-btn svg { width: 16px; height: 16px; }
+
+/* ─── Cards ──────────────────────────────────────────────────────  */
+.card {
+  background: var(--color-surface-neutral-ground);
+  border: 1px solid var(--color-border-neutral);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-low);
+}
+.card-pad { padding: var(--sp-5); }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-4); }
+.card-title { font-size: 13px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-800); line-height: 20px; }
+.card-action { font-size: 12px; color: var(--color-brand-primary-500); cursor: pointer; font-weight: var(--font-weight-semi); }
+.card-action:hover { text-decoration: underline; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)} }
+
+/* ─── KPI row ────────────────────────────────────────────────────  */
+.kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: var(--sp-3); }
+.kpi-card { padding: var(--sp-4) var(--sp-5); position: relative; overflow: hidden; animation: fadeUp .4s ease both; }
+.kpi-card:nth-child(1){animation-delay:.05s}.kpi-card:nth-child(2){animation-delay:.1s}
+.kpi-card:nth-child(3){animation-delay:.15s}.kpi-card:nth-child(4){animation-delay:.2s}
+.kpi-stripe { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: var(--radius-card) var(--radius-card) 0 0; }
+.kpi-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-grey-500); margin-bottom: 10px; }
+.kpi-value { font-size: var(--fs-title-lg); font-weight: var(--font-weight-bold); line-height: var(--lh-title-lg); letter-spacing: var(--tracking-compact); color: var(--color-neutral-grey-800); }
+.kpi-delta { font-size: 11px; margin-top: 6px; display: flex; align-items: center; gap: 4px; font-weight: var(--font-weight-semi); }
+.kpi-delta.up { color: var(--color-feedback-green-500); }
+.kpi-delta.down { color: var(--color-brand-primary-500); }
+
+/* ─── Charts ─────────────────────────────────────────────────────  */
+.charts-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--sp-4); animation: fadeUp .4s .25s ease both; }
+.chart-wrap { position: relative; height: 200px; }
+
+/* ─── Bottom row ─────────────────────────────────────────────────  */
+.bottom-row { display: grid; grid-template-columns: 1fr 340px; gap: var(--sp-4); animation: fadeUp .4s .3s ease both; }
+
+/* ─── Leads table ────────────────────────────────────────────────  */
+.leads-table { width: 100%; border-collapse: collapse; margin-top: var(--sp-2); }
+.leads-table th { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--color-neutral-grey-500); padding: var(--sp-2) var(--sp-3); text-align: left; border-bottom: 1px solid var(--color-border-neutral); }
+.leads-table td { padding: 10px var(--sp-3); border-bottom: 1px solid var(--color-neutral-grey-100); font-size: 12px; vertical-align: middle; }
+.leads-table tr:last-child td { border-bottom: none; }
+.leads-table tr:hover td { background: var(--color-neutral-grey-50); }
+.score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+.score-bar { height: 4px; border-radius: 2px; flex: 1; background: var(--color-surface-neutral-medium); }
+.score-fill { height: 100%; border-radius: 2px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius-pill); font-size: 10px; font-weight: var(--font-weight-semi); }
+.badge-high { background: var(--color-feedback-green-500-15); color: var(--color-feedback-green-500); }
+.badge-med  { background: var(--color-feedback-yellow-500-15); color: #927C19; }
+.badge-low  { background: var(--color-brand-primary-500-15); color: var(--color-brand-primary-500); }
+.source-chip { font-size: 10px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-600); background: var(--color-surface-neutral-low); padding: 3px 8px; border-radius: var(--radius-chip); border: 1px solid var(--color-border-neutral); }
+
+/* ─── Settings card ──────────────────────────────────────────────  */
+.settings-tabs { display: flex; border-bottom: 1px solid var(--color-border-neutral); margin-bottom: var(--sp-4); }
+.stab { padding: 8px 14px; font-size: 12px; font-weight: var(--font-weight-semi); cursor: pointer; color: var(--color-neutral-grey-500); border-bottom: 2px solid transparent; transition: all .15s; margin-bottom: -1px; font-family: var(--font-family-base); border-top: none; border-left: none; border-right: none; background: none; }
+.stab.active { color: var(--color-brand-primary-500); border-bottom-color: var(--color-brand-primary-500); }
+.criterion-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.criterion-header { display: flex; align-items: center; justify-content: space-between; }
+.criterion-label { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-700); }
+.criterion-val { font-size: 13px; font-weight: var(--font-weight-bold); }
+input[type=range] { -webkit-appearance: none; width: 100%; height: 3px; background: var(--color-surface-neutral-medium); border-radius: 2px; outline: none; cursor: pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--color-brand-primary-500); cursor: pointer; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--color-border-neutral); }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-800); }
+.toggle-sub { font-size: 11px; color: var(--color-neutral-grey-500); margin-top: 2px; }
+.toggle { position: relative; width: 32px; height: 18px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: var(--color-neutral-grey-300); border-radius: 9px; cursor: pointer; transition: .2s; }
+.toggle input:checked + .toggle-track { background: var(--color-brand-primary-500); }
+.toggle-thumb { position: absolute; height: 12px; width: 12px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .2s; pointer-events: none; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.toggle input:checked ~ .toggle-thumb { left: 17px; }
+.save-btn { margin-top: 14px; width: 100%; padding: 9px; background: var(--color-brand-primary-500); color: white; border: none; border-radius: var(--radius-button); font-family: var(--font-family-base); font-size: 13px; font-weight: var(--font-weight-bold); cursor: pointer; transition: opacity .15s; }
+.save-btn:hover { opacity: .88; }
+.weight-total { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.weight-bar-bg { flex: 1; height: 5px; background: var(--color-surface-neutral-medium); border-radius: 3px; overflow: hidden; }
+.weight-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+.weight-label { font-size: 11px; font-weight: var(--font-weight-bold); min-width: 36px; text-align: right; }
+.weight-warn { color: var(--color-brand-primary-500); }
+.weight-ok   { color: var(--color-feedback-green-500); }
+.channel-tag { padding: 5px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: var(--font-weight-semi); cursor: pointer; border: 1px solid var(--color-border-neutral); color: var(--color-neutral-grey-600); transition: all .15s; background: none; font-family: var(--font-family-base); }
+.channel-tag.on { background: var(--color-brand-primary-500-15); border-color: var(--color-brand-primary-500); color: var(--color-brand-primary-500); }
+.channel-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+
+/* ─── Funnel bars ────────────────────────────────────────────────  */
+.funnel-row { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.funnel-item { display: flex; align-items: center; gap: 10px; }
+.funnel-label { font-size: 11px; color: var(--color-neutral-grey-600); width: 70px; flex-shrink: 0; font-weight: var(--font-weight-semi); }
+.funnel-bar-bg { flex: 1; height: 20px; background: var(--color-surface-neutral-low); border-radius: var(--radius-chip); overflow: hidden; }
+.funnel-fill { height: 100%; border-radius: var(--radius-chip); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; font-weight: var(--font-weight-bold); transition: width .6s ease; }
+
+/* ─── Queue page ─────────────────────────────────────────────────  */
+.queue-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--sp-3); }
+.qstat { padding: 14px var(--sp-4); }
+.qstat-val { font-size: var(--fs-title-md); font-weight: var(--font-weight-bold); line-height: var(--lh-title-md); letter-spacing: var(--tracking-tight); }
+.qstat-label { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--color-neutral-grey-500); margin-top: 4px; }
+.filter-bar { display: flex; gap: 6px; align-items: center; }
+.filter-chip { padding: 5px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: var(--font-weight-semi); border: 1px solid var(--color-border-neutral); color: var(--color-neutral-grey-600); cursor: pointer; transition: all .15s; background: none; font-family: var(--font-family-base); }
+.filter-chip.active { background: var(--color-brand-primary-500-15); border-color: var(--color-brand-primary-500); color: var(--color-brand-primary-500); }
+.filter-chip:hover:not(.active) { background: var(--color-state-hover); }
+.sort-info { margin-left: auto; font-size: 11px; color: var(--color-neutral-grey-500); font-weight: var(--font-weight-semi); }
+.lead-queue-card { border: 1px solid var(--color-border-neutral); border-radius: var(--radius-card); padding: var(--sp-5); background: white; transition: border-color .15s, box-shadow .15s; animation: fadeUp .3s ease both; margin-bottom: var(--sp-3); }
+.lead-queue-card:hover { border-color: var(--color-neutral-grey-400); box-shadow: 0 4px 6px rgba(0,0,0,.06); }
+.lq-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--sp-3); }
+.lq-meta { display: flex; align-items: center; gap: var(--sp-3); }
+.lq-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.lq-name { font-size: var(--fs-body-md); font-weight: var(--font-weight-semi); line-height: var(--lh-body-md); color: var(--color-neutral-grey-800); }
+.lq-time { font-size: 11px; color: var(--color-neutral-grey-500); margin-top: 2px; }
+.score-pill { display: flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 11px; font-weight: var(--font-weight-semi); }
+.sp-high { background: var(--color-feedback-green-500-15); color: var(--color-feedback-green-500); border: 1px solid rgba(24,156,123,.2); }
+.sp-mid  { background: var(--color-feedback-yellow-500-15); color: #927C19; border: 1px solid rgba(243,206,41,.25); }
+.sp-low  { background: var(--color-brand-primary-500-15); color: var(--color-brand-primary-500); border: 1px solid rgba(223,21,23,.2); }
+.reason-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: var(--sp-3); }
+.rc { font-size: 10px; padding: 3px 8px; border-radius: var(--radius-pill); display: flex; align-items: center; gap: 4px; font-weight: var(--font-weight-semi); }
+.rc-pos { background: var(--color-feedback-green-500-15); color: var(--color-feedback-green-500); }
+.rc-neg { background: var(--color-brand-primary-500-15); color: var(--color-brand-primary-500); }
+.lq-divider { height: 1px; background: var(--color-border-neutral); margin: var(--sp-3) 0; }
+.lq-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: var(--sp-3); }
+.lq-field-label { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--color-neutral-grey-500); margin-bottom: 2px; }
+.lq-field-val { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-700); }
+.prop-row { display: flex; align-items: center; gap: 10px; padding: 8px var(--sp-3); background: var(--color-surface-neutral-low); border-radius: var(--radius-chip); margin-bottom: 10px; border: 1px solid var(--color-border-neutral); }
+.prop-thumb { width: 34px; height: 34px; border-radius: 6px; background: rgba(66,127,148,.15); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.prop-name { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-800); }
+.prop-agency { font-size: 10px; color: var(--color-neutral-grey-500); margin-top: 2px; }
+.msg-box { font-size: 12px; color: var(--color-neutral-grey-700); padding: 8px var(--sp-3); background: var(--color-surface-neutral-low); border-radius: var(--radius-chip); margin-bottom: 10px; line-height: 1.6; border-left: 3px solid var(--color-brand-secondary-500); }
+.tag-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 14px; }
+.ltag { font-size: 10px; padding: 3px 8px; border-radius: var(--radius-pill); background: var(--color-surface-neutral-low); color: var(--color-neutral-grey-600); border: 1px solid var(--color-border-neutral); font-weight: var(--font-weight-semi); }
+.lq-actions { display: flex; gap: 8px; }
+.btn-prim { font-size: 12px; padding: 7px 14px; border-radius: var(--radius-button); background: var(--color-brand-primary-500); color: white; border: none; cursor: pointer; font-family: var(--font-family-base); font-weight: var(--font-weight-bold); transition: opacity .15s; }
+.btn-prim:hover { opacity: .88; }
+.btn-sec { font-size: 12px; padding: 7px 14px; border-radius: var(--radius-button); background: none; color: var(--color-neutral-grey-700); border: 1px solid var(--color-border-neutral); cursor: pointer; font-family: var(--font-family-base); font-weight: var(--font-weight-semi); transition: all .15s; }
+.btn-sec:hover { background: var(--color-state-hover); }
+.btn-danger { font-size: 12px; padding: 7px 14px; border-radius: var(--radius-button); background: none; color: var(--color-brand-primary-500); border: 1px solid rgba(223,21,23,.25); cursor: pointer; font-family: var(--font-family-base); font-weight: var(--font-weight-semi); margin-left: auto; transition: all .15s; }
+.btn-danger:hover { background: var(--color-brand-primary-500-15); }
+.btn-trash { background: none; border: none; color: var(--color-neutral-grey-400); cursor: pointer; font-size: 16px; padding: 4px; transition: color .15s; }
+.btn-trash:hover { color: var(--color-brand-primary-500); }
+
+/* ─── Criteria page ──────────────────────────────────────────────  */
+.criteria-page { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5); align-items: start; }
+.crit-section-title { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--color-neutral-grey-500); margin-bottom: 14px; }
+.crit-row { display: flex; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--color-border-neutral); gap: var(--sp-3); }
+.crit-row:last-child { border-bottom: none; }
+.crit-info { flex: 1; }
+.crit-name { font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-neutral-grey-800); }
+.crit-desc { font-size: 11px; color: var(--color-neutral-grey-500); margin-top: 3px; }
+.crit-weight { font-size: 11px; padding: 4px 8px; border-radius: var(--radius-chip); border: 1px solid var(--color-border-neutral); color: var(--color-neutral-grey-700); background: none; cursor: pointer; font-family: var(--font-family-base); font-weight: var(--font-weight-semi); appearance: none; }
+.kw-section { padding: 11px 0; border-bottom: 1px solid var(--color-border-neutral); }
+.kw-section:last-child { border-bottom: none; }
+.kw-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.kw-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+.kw-tag { font-size: 10px; padding: 3px 8px 3px 10px; border-radius: var(--radius-pill); background: var(--color-surface-neutral-low); border: 1px solid var(--color-border-neutral); color: var(--color-neutral-grey-800); display: flex; align-items: center; gap: 5px; font-weight: var(--font-weight-semi); }
+.kw-tag-x { color: var(--color-neutral-grey-500); cursor: pointer; font-size: 12px; line-height: 1; background: none; border: none; padding: 0; }
+.kw-tag-x:hover { color: var(--color-brand-primary-500); }
+.kw-input-row { display: flex; gap: 6px; }
+/* Tokko DS text field */
+.kw-input {
+  flex: 1; font-family: var(--font-family-base);
+  font-size: var(--fs-body-xs); font-weight: var(--font-weight-regular);
+  line-height: var(--lh-body-md); padding: var(--input-py) var(--input-px);
+  border-radius: var(--input-radius); border: 1px solid var(--color-neutral-grey-300);
+  background: var(--color-surface-neutral-ground); color: var(--color-neutral-grey-800); outline: none;
+  transition: border-color .15s;
+}
+.kw-input:hover { border-color: var(--color-neutral-grey-400); background: linear-gradient(rgba(148,162,171,.1),rgba(148,162,171,.1)), white; }
+.kw-input:focus { border: 1.5px solid var(--color-feedback-blue-500); background: linear-gradient(rgba(148,162,171,.1),rgba(148,162,171,.1)), white; }
+.kw-add-btn { font-size: 12px; padding: 7px 12px; border-radius: var(--radius-chip); background: var(--color-brand-primary-500); color: white; border: none; cursor: pointer; font-family: var(--font-family-base); font-weight: var(--font-weight-bold); }
+.info-band { background: var(--color-feedback-blue-500-15); border: 1px solid rgba(0,125,221,.2); border-radius: var(--radius-chip); padding: 10px 14px; font-size: 12px; font-weight: var(--font-weight-semi); color: var(--color-feedback-blue-600); display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.criteria-save-row { display: flex; gap: 8px; justify-content: flex-end; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── Topbar (nav_superior) ── bg #1A4958 ─── -->
+  <header class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-logo-mark">
+        <svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5" fill="none" stroke="white" stroke-width="2"/><circle cx="7" cy="7" r="2" fill="white"/></svg>
+      </div>
+      Lead<span>Trust</span>
+    </div>
+
+    <div class="topbar-search">
+      <svg class="topbar-search-icon" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="4"/><path d="m8.5 8.5 2 2" stroke-linecap="round"/></svg>
+      <span class="topbar-search-placeholder">Buscar leads, propiedades, contactos…</span>
+    </div>
+
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a5 5 0 0 1 5 5v2l1 2H2l1-2V7a5 5 0 0 1 5-5Z"/><path d="M6 13a2 2 0 0 0 4 0" stroke-linecap="round"/></svg>
+        <span class="topbar-badge">3</span>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v12M2 8h12" stroke-linecap="round"/></svg>
+      </button>
+      <div class="topbar-user">
+        <div class="topbar-avatar">JM</div>
+        <span class="topbar-username">User name</span>
+      </div>
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1M8 13v1M2 8h1M13 8h1M3.5 3.5l.7.7M11.8 11.8l.7.7M3.5 12.5l.7-.7M11.8 4.2l.7-.7" stroke-linecap="round"/></svg>
+      </button>
+      <button class="topbar-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 7v4M8 5.5v.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Body row ─────────────────────── -->
+  <div class="body-row">
+
+    <!-- ── Left rail (80px, white) ─── -->
+    <nav class="rail">
+      <div class="rail-primary-btn" title="Nuevo">
+        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2"><path d="M7 2v10M2 7h10" stroke-linecap="round"/></svg>
+      </div>
+      <div class="rail-nav">
+        <div class="rail-item active" onclick="navigate('dashboard',this)" title="Dashboard">
+          <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.5" opacity=".7"/><rect x="9" y="1" width="6" height="6" rx="1.5" opacity=".7"/><rect x="1" y="9" width="6" height="6" rx="1.5" opacity=".7"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        </div>
+        <div class="rail-item" onclick="navigate('queue',this)" title="Cola de leads">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+          <span class="rail-badge">12</span>
+        </div>
+        <div class="rail-item" onclick="navigate('processed',this)" title="Procesados">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="rail-item" onclick="navigate('criteria',this)" title="Criterios">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4" stroke-linecap="round"/></svg>
+        </div>
+        <div class="rail-item" title="Equipo">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="6" r="2.5"/><circle cx="11" cy="6" r="2.5"/><path d="M1 13c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5" stroke-linecap="round"/><path d="M11 9.5c2.2 0 4 1.5 4 3.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="rail-item" title="Integraciones">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" stroke-linecap="round"/></svg>
+        </div>
+        <div class="rail-item" title="Reportes">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 2h10v12H3z"/><path d="M6 6h4M6 9h4M6 12h2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="rail-item" title="Config">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="2.5"/><path d="M8 2v1M8 13v1M2 8h1M13 8h1M3.5 3.5l.7.7M11.8 11.8l.7.7M3.5 12.5l.7-.7M11.8 4.2l.7-.7" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── Content area ─────────────── -->
+    <div class="content-area">
+
+      <!-- Page header (white, border-bottom, radius-top) -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <div class="breadcrumb">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 12L6 8l4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Volver
+          </div>
+          <div id="ph-title" class="page-title">Dashboard de leads</div>
+          <div id="ph-sub" class="page-sub">Mayo 2026 · Todas las fuentes</div>
+        </div>
+        <div class="page-header-right">
+          <div id="ph-tabs" class="tabs">
+            <button class="tab active" onclick="setTab(this)">Hoy</button>
+            <button class="tab" onclick="setTab(this)">7 días</button>
+            <button class="tab" onclick="setTab(this)">30 días</button>
+          </div>
+          <button class="btn-secondary" id="ph-secondary" style="display:none">Restablecer</button>
+          <button class="btn-primary" id="ph-primary">+ Nuevo lead</button>
+        </div>
+      </div>
+
+      <!-- Page content scroll -->
+      <div class="page-content">
+
+        <!-- ══ DASHBOARD ══ -->
+        <div id="view-dashboard" class="page-view active">
+          <div class="kpi-row">
+            <div class="card kpi-card">
+              <div class="kpi-stripe" style="background:var(--color-brand-secondary-500)"></div>
+              <div class="kpi-label">Total leads</div>
+              <div class="kpi-value">247</div>
+              <div class="kpi-delta up">↑ 18% vs semana pasada</div>
+            </div>
+            <div class="card kpi-card">
+              <div class="kpi-stripe" style="background:var(--color-feedback-green-500)"></div>
+              <div class="kpi-label">Score promedio</div>
+              <div class="kpi-value" style="color:var(--color-feedback-green-500)">64</div>
+              <div class="kpi-delta up">↑ 4 pts esta semana</div>
+            </div>
+            <div class="card kpi-card">
+              <div class="kpi-stripe" style="background:var(--color-brand-secondary-500)"></div>
+              <div class="kpi-label">Alta calidad (≥75)</div>
+              <div class="kpi-value" style="color:var(--color-brand-secondary-500)">89</div>
+              <div class="kpi-delta up">36% del total</div>
+            </div>
+            <div class="card kpi-card">
+              <div class="kpi-stripe" style="background:var(--color-brand-primary-500)"></div>
+              <div class="kpi-label">Descartados (spam)</div>
+              <div class="kpi-value" style="color:var(--color-brand-primary-500)">31</div>
+              <div class="kpi-delta down">↑ 3 más que ayer</div>
+            </div>
+          </div>
+
+          <div class="charts-row">
+            <div class="card card-pad">
+              <div class="card-header">
+                <div class="card-title">Leads por día y calidad</div>
+                <div class="card-action" onclick="navigate('queue',document.querySelectorAll('.rail-item')[1])">Ver cola →</div>
+              </div>
+              <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+            </div>
+            <div class="card card-pad">
+              <div class="card-header">
+                <div class="card-title">Distribución por calidad</div>
+                <div class="card-action">Ver detalle →</div>
+              </div>
+              <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+            </div>
+          </div>
+
+          <div class="bottom-row">
+            <div class="card card-pad">
+              <div class="card-header">
+                <div class="card-title">Leads recientes</div>
+                <div style="display:flex;gap:8px">
+                  <div class="badge badge-high">Alta: 89</div>
+                  <div class="badge badge-med">Media: 127</div>
+                  <div class="badge badge-low">Baja: 31</div>
+                </div>
+              </div>
+              <div style="margin-bottom:16px">
+                <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-neutral-grey-500);margin-bottom:8px">Volumen por fuente</div>
+                <div class="funnel-row">
+                  <div class="funnel-item"><div class="funnel-label">Zonaprop</div><div class="funnel-bar-bg"><div class="funnel-fill" style="width:82%;background:rgba(66,127,148,.2);color:var(--color-brand-secondary-700)">82</div></div></div>
+                  <div class="funnel-item"><div class="funnel-label">Argenprop</div><div class="funnel-bar-bg"><div class="funnel-fill" style="width:55%;background:rgba(0,125,221,.12);color:var(--color-feedback-blue-500)">55</div></div></div>
+                  <div class="funnel-item"><div class="funnel-label">WhatsApp</div><div class="funnel-bar-bg"><div class="funnel-fill" style="width:47%;background:rgba(24,156,123,.15);color:var(--color-feedback-green-500)">47</div></div></div>
+                  <div class="funnel-item"><div class="funnel-label">Mail</div><div class="funnel-bar-bg"><div class="funnel-fill" style="width:38%;background:rgba(243,206,41,.2);color:#927C19">38</div></div></div>
+                  <div class="funnel-item"><div class="funnel-label">Chat web</div><div class="funnel-bar-bg"><div class="funnel-fill" style="width:25%;background:rgba(223,21,23,.1);color:var(--color-brand-primary-500)">25</div></div></div>
+                </div>
+              </div>
+              <table class="leads-table">
+                <thead><tr><th>Lead</th><th>Trust</th><th>Conversión</th><th>Urgencia</th><th>Fuente</th><th>Estado</th></tr></thead>
+                <tbody id="leadsBody"></tbody>
+              </table>
+            </div>
+
+            <div class="card card-pad">
+              <div class="card-title" style="margin-bottom:12px">Criterios de scoring</div>
+              <div class="settings-tabs">
+                <button class="stab active" onclick="switchStab(this,'weights')">Pesos</button>
+                <button class="stab" onclick="switchStab(this,'filters')">Filtros</button>
+                <button class="stab" onclick="switchStab(this,'canales')">Canales</button>
+              </div>
+              <div id="tab-weights">
+                <div style="font-size:11px;color:var(--color-neutral-grey-500);margin-bottom:12px">Distribuí el 100% entre las tres dimensiones</div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">🔒 Trust Score</div><div class="criterion-val" style="color:var(--color-brand-primary-500)" id="val-trust">40%</div></div>
+                  <input type="range" min="0" max="100" value="40" id="sl-trust" oninput="updateWeights()">
+                </div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">🎯 Conversión</div><div class="criterion-val" style="color:var(--color-feedback-green-500)" id="val-conv">40%</div></div>
+                  <input type="range" min="0" max="100" value="40" id="sl-conv" oninput="updateWeights()">
+                </div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">⚡ Urgencia</div><div class="criterion-val" style="color:#927C19" id="val-urg">20%</div></div>
+                  <input type="range" min="0" max="100" value="20" id="sl-urg" oninput="updateWeights()">
+                </div>
+                <div class="weight-total">
+                  <div style="font-size:11px;color:var(--color-neutral-grey-500)">Total</div>
+                  <div class="weight-bar-bg"><div class="weight-bar-fill" id="weight-fill" style="width:100%;background:var(--color-feedback-green-500)"></div></div>
+                  <div class="weight-label weight-ok" id="weight-total-label">100%</div>
+                </div>
+                <div style="margin-top:14px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-neutral-grey-500);margin-bottom:8px">Umbral de alerta</div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">Score mínimo para notificar</div><div class="criterion-val" id="val-threshold">70</div></div>
+                  <input type="range" min="0" max="100" value="70" oninput="document.getElementById('val-threshold').textContent=this.value">
+                </div>
+              </div>
+              <div id="tab-filters" style="display:none">
+                <div style="font-size:11px;color:var(--color-neutral-grey-500);margin-bottom:12px">Reglas aplicadas antes del scoring</div>
+                <div class="toggle-row"><div><div class="toggle-label">Bloquear números inválidos</div><div class="toggle-sub">Formato de teléfono no válido</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Detectar spam automático</div><div class="toggle-sub">Mensajes tipo bot o repetidos</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Filtrar duplicados</div><div class="toggle-sub">Mismo contacto en 48hs</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Ignorar sin mensaje</div><div class="toggle-sub">Lead sin texto de consulta</div></div><label class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Score mínimo global = 15</div><div class="toggle-sub">Debajo de 15 se descarta</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+              </div>
+              <div id="tab-canales" style="display:none">
+                <div style="font-size:11px;color:var(--color-neutral-grey-500);margin-bottom:12px">Activá o desactivá fuentes de leads</div>
+                <div class="channel-row">
+                  <div class="channel-tag on">Zonaprop</div><div class="channel-tag on">Argenprop</div>
+                  <div class="channel-tag on">WhatsApp</div><div class="channel-tag on">Mail</div>
+                  <div class="channel-tag">Mercadolibre</div><div class="channel-tag on">Chat web</div>
+                  <div class="channel-tag">Navent</div>
+                </div>
+                <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-neutral-grey-500);margin:12px 0 8px">Boost por canal</div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">WhatsApp</div><div class="criterion-val" style="color:var(--color-feedback-green-500)" id="val-wa">1.3×</div></div>
+                  <input type="range" min="10" max="20" value="13" oninput="document.getElementById('val-wa').textContent=(this.value/10).toFixed(1)+'×'">
+                </div>
+                <div class="criterion-row">
+                  <div class="criterion-header"><div class="criterion-label">Mail</div><div class="criterion-val" style="color:var(--color-feedback-blue-500)" id="val-mail">1.1×</div></div>
+                  <input type="range" min="10" max="20" value="11" oninput="document.getElementById('val-mail').textContent=(this.value/10).toFixed(1)+'×'">
+                </div>
+              </div>
+              <button class="save-btn">Guardar criterios →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ COLA DE LEADS ══ -->
+        <div id="view-queue" class="page-view">
+          <div class="queue-stats">
+            <div class="card qstat"><div class="qstat-val">12</div><div class="qstat-label">Pendientes</div></div>
+            <div class="card qstat"><div class="qstat-val" style="color:var(--color-feedback-green-500)">5</div><div class="qstat-label">Alta calidad</div></div>
+            <div class="card qstat"><div class="qstat-val" style="color:var(--color-brand-primary-500)">2</div><div class="qstat-label">Baja calidad</div></div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-chip active" onclick="filterQueue('all',this)">Todos</button>
+            <button class="filter-chip" onclick="filterQueue('high',this)">Alta calidad</button>
+            <button class="filter-chip" onclick="filterQueue('mid',this)">Media</button>
+            <button class="filter-chip" onclick="filterQueue('low',this)">Baja calidad</button>
+            <span class="sort-info">↓ Por llegada</span>
+          </div>
+          <div id="queue-list"></div>
+        </div>
+
+        <!-- ══ PROCESADOS ══ -->
+        <div id="view-processed" class="page-view">
+          <div style="color:var(--color-neutral-grey-500);font-size:13px">Vista en construcción.</div>
+        </div>
+
+        <!-- ══ CRITERIOS ══ -->
+        <div id="view-criteria" class="page-view">
+          <div class="info-band">
+            <span style="font-size:14px;flex-shrink:0">ℹ</span>
+            <span>Los cambios se aplican automáticamente a todos los leads pendientes. Los scores se recalculan al guardar.</span>
+          </div>
+          <div class="criteria-page">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card card-pad">
+                <div class="crit-section-title">Datos de contacto</div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Tiene email</div><div class="crit-desc">El lead proveyó un email de contacto</div></div><select class="crit-weight"><option>Alta</option><option selected>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Tiene teléfono</div><div class="crit-desc">Celular o fijo registrado</div></div><select class="crit-weight"><option selected>Alta</option><option>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Teléfono completo</div><div class="crit-desc">Al menos 10 dígitos</div></div><select class="crit-weight"><option>Alta</option><option selected>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+              </div>
+              <div class="card card-pad">
+                <div class="crit-section-title">Propiedad y fuente</div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Solicitud de visita</div><div class="crit-desc">El mensaje menciona fecha o pedido de turno</div></div><select class="crit-weight"><option selected>Alta</option><option>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Portal verificado</div><div class="crit-desc">Lead proviene de portal real (no demo/test)</div></div><select class="crit-weight"><option>Alta</option><option selected>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+              </div>
+              <div class="card card-pad">
+                <div class="crit-section-title">Pesos de dimensiones</div>
+                <div style="font-size:11px;color:var(--color-neutral-grey-500);margin-bottom:12px">Distribuí el 100% entre las tres dimensiones</div>
+                <div class="criterion-row"><div class="criterion-header"><div class="criterion-label">🔒 Trust Score</div><div class="criterion-val" style="color:var(--color-brand-primary-500)" id="val-trust2">40%</div></div><input type="range" min="0" max="100" value="40" oninput="syncWeight(this,'val-trust2')"></div>
+                <div class="criterion-row"><div class="criterion-header"><div class="criterion-label">🎯 Conversión</div><div class="criterion-val" style="color:var(--color-feedback-green-500)" id="val-conv2">40%</div></div><input type="range" min="0" max="100" value="40" oninput="syncWeight(this,'val-conv2')"></div>
+                <div class="criterion-row"><div class="criterion-header"><div class="criterion-label">⚡ Urgencia</div><div class="criterion-val" style="color:#927C19" id="val-urg2">20%</div></div><input type="range" min="0" max="100" value="20" oninput="syncWeight(this,'val-urg2')"></div>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="card card-pad">
+                <div class="crit-section-title">Mensaje</div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Mensaje no vacío</div><div class="crit-desc">El contacto escribió algo</div></div><select class="crit-weight"><option>Alta</option><option selected>Media</option><option>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="crit-row"><div class="crit-info"><div class="crit-name">Mensaje extenso</div><div class="crit-desc">Más de 30 caracteres — indica intención real</div></div><select class="crit-weight"><option>Alta</option><option>Media</option><option selected>Baja</option></select><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="kw-section">
+                  <div class="kw-header"><div class="crit-name">Palabras clave positivas</div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                  <div class="crit-desc" style="margin-bottom:8px">El mensaje contiene estas palabras — suma puntos</div>
+                  <div class="kw-tags" id="kw-pos"></div>
+                  <div class="kw-input-row"><input class="kw-input" id="kw-pos-input" placeholder="agregar palabra…" onkeydown="if(event.key==='Enter')addKw('pos')"><button class="kw-add-btn" onclick="addKw('pos')">+ agregar</button></div>
+                </div>
+                <div class="kw-section">
+                  <div class="kw-header"><div class="crit-name">Palabras clave negativas</div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                  <div class="crit-desc" style="margin-bottom:8px">Penaliza si el mensaje las contiene</div>
+                  <div class="kw-tags" id="kw-neg"></div>
+                  <div class="kw-input-row"><input class="kw-input" id="kw-neg-input" placeholder="agregar palabra…" onkeydown="if(event.key==='Enter')addKw('neg')"><button class="kw-add-btn" onclick="addKw('neg')">+ agregar</button></div>
+                </div>
+              </div>
+              <div class="card card-pad">
+                <div class="crit-section-title">Filtros automáticos</div>
+                <div class="toggle-row"><div><div class="toggle-label">Bloquear números inválidos</div><div class="toggle-sub">Formato de teléfono no válido</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Detectar spam automático</div><div class="toggle-sub">Mensajes tipo bot o repetidos</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Filtrar duplicados</div><div class="toggle-sub">Mismo contacto en 48hs</div></div><label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+                <div class="toggle-row"><div><div class="toggle-label">Ignorar sin mensaje</div><div class="toggle-sub">Lead sin texto de consulta</div></div><label class="toggle"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+              </div>
+              <div class="criteria-save-row">
+                <button class="btn-secondary">Restablecer defaults</button>
+                <button class="btn-primary" style="padding:9px 20px;font-size:13px">Guardar criterios →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-content -->
+
+      <!-- ── Bottom bar (white, top shadow, radius top) ── -->
+      <div class="bottom-bar">
+        <div class="bottom-bar-section">
+          <span class="bottom-bar-count" id="bb-count">247</span>
+          <div>
+            <div class="bottom-bar-label">leads</div>
+            <div class="bottom-bar-label">analizados</div>
+          </div>
+        </div>
+        <div class="bottom-bar-divider"></div>
+        <div class="bottom-bar-section" style="gap:2px;flex:1">
+          <button class="bb-icon-btn" title="Exportar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12h12" stroke-linecap="round"/></svg></button>
+          <button class="bb-icon-btn" title="Filtrar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 8h6M7 12h2" stroke-linecap="round"/></svg></button>
+          <button class="bb-icon-btn" title="Ordenar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M5 8h6M7 12h2" stroke-linecap="round"/></svg></button>
+          <button class="bb-icon-btn" title="Vista lista"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="3" rx="1"/><rect x="2" y="8" width="12" height="3" rx="1"/><rect x="2" y="13" width="8" height="1" rx=".5"/></svg></button>
+          <button class="bb-icon-btn" title="Vista tarjetas"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>
+        </div>
+        <div class="bottom-bar-divider"></div>
+        <div class="bb-live-badge"><div class="live-dot"></div> En vivo · Analizando leads</div>
+      </div>
+
+    </div><!-- /content-area -->
+
+    <!-- ── Right rail ─────────────── -->
+    <div class="right-rail">
+      <button class="right-rail-btn" title="Compartir"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="4" r="1.5"/><circle cx="4" cy="8" r="1.5"/><circle cx="12" cy="12" r="1.5"/><path d="M5.5 7.2l5-2.4M5.5 8.8l5 2.4" stroke-linecap="round"/></svg></button>
+      <button class="right-rail-btn" title="Marcar"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h8v10l-4-3-4 3V2z" stroke-linejoin="round"/></svg></button>
+      <button class="right-rail-btn" title="Tablero"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="12" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></button>
+      <button class="right-rail-btn" title="Añadir widget"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v6M5 8h6" stroke-linecap="round"/></svg></button>
+    </div>
+
+  </div><!-- /body-row -->
+</div><!-- /shell -->
+
+<script>
+/* ── Navigation ─────────────────────────────────────────────── */
+const pageHeaders = {
+  dashboard: { title: 'Dashboard de leads', sub: 'Mayo 2026 · Todas las fuentes', tabs: true,  primary: '+ Nuevo lead' },
+  queue:     { title: 'Cola de leads',       sub: 'Ordenados por llegada · Mayo 2026', tabs: false, primary: '+ Ingresar lead' },
+  processed: { title: 'Leads procesados',    sub: 'Historial completo',            tabs: false, primary: 'Exportar' },
+  criteria:  { title: 'Criterios de scoring',sub: 'Configurá cómo se califica cada lead entrante', tabs: false, primary: 'Guardar criterios' }
+};
+
+function navigate(viewId, el) {
+  document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.rail-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + viewId).classList.add('active');
+  if (el) el.classList.add('active');
+  const h = pageHeaders[viewId];
+  if (h) {
+    document.getElementById('ph-title').textContent = h.title;
+    document.getElementById('ph-sub').textContent   = h.sub;
+    document.getElementById('ph-tabs').style.display = h.tabs ? '' : 'none';
+    document.getElementById('ph-primary').textContent = h.primary;
+    document.getElementById('bb-count').textContent = viewId === 'queue' ? '12' : '247';
+  }
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchStab(el, name) {
+  document.querySelectorAll('.stab').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  ['weights','filters','canales'].forEach(n => {
+    document.getElementById('tab-' + n).style.display = n === name ? 'block' : 'none';
+  });
+}
+
+document.querySelectorAll('.channel-tag').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
+
+/* ── Weights ─────────────────────────────────────────────────── */
+function updateWeights() {
+  const t = parseInt(document.getElementById('sl-trust').value),
+        c = parseInt(document.getElementById('sl-conv').value),
+        u = parseInt(document.getElementById('sl-urg').value),
+        total = t + c + u;
+  document.getElementById('val-trust').textContent = t + '%';
+  document.getElementById('val-conv').textContent  = c + '%';
+  document.getElementById('val-urg').textContent   = u + '%';
+  document.getElementById('weight-total-label').textContent = total + '%';
+  const fill  = document.getElementById('weight-fill');
+  const label = document.getElementById('weight-total-label');
+  fill.style.width = Math.min(total, 100) + '%';
+  if (total === 100)      { fill.style.background = 'var(--color-feedback-green-500)';  label.className = 'weight-label weight-ok'; }
+  else if (total > 100)   { fill.style.background = 'var(--color-brand-primary-500)';   label.className = 'weight-label weight-warn'; }
+  else                    { fill.style.background = 'var(--color-feedback-yellow-500)'; label.className = 'weight-label weight-warn'; }
+}
+function syncWeight(inp, id) { document.getElementById(id).textContent = inp.value + '%'; }
+
+/* ── Leads table ─────────────────────────────────────────────── */
+const dashLeads = [
+  { name: 'S.G.', msg: 'Busca 3 amb Palermo urgente',           trust: 88, conv: 91, urg: 95, source: 'WhatsApp',  quality: 'high' },
+  { name: 'M.R.', msg: 'Quiero info del depto en Belgrano',     trust: 72, conv: 68, urg: 55, source: 'Zonaprop',  quality: 'high' },
+  { name: 'A.L.', msg: 'Precio del piso en Recoleta',           trust: 61, conv: 58, urg: 40, source: 'Mail',      quality: 'med'  },
+  { name: 'C.T.', msg: 'Hola buenas',                           trust: 32, conv: 28, urg: 20, source: 'Chat web',  quality: 'low'  },
+  { name: 'P.V.', msg: 'Necesito alquilar en Caballito ya',     trust: 79, conv: 82, urg: 88, source: 'Argenprop', quality: 'high' },
+  { name: 'R.F.', msg: 'Cuánto sale el 2 amb en Villa Crespo',  trust: 55, conv: 60, urg: 45, source: 'Zonaprop',  quality: 'med'  },
+];
+
+function scoreColor(v) {
+  return v >= 75 ? 'var(--color-feedback-green-500)' : v >= 50 ? '#927C19' : 'var(--color-brand-primary-500)';
+}
+
+const tbody = document.getElementById('leadsBody');
+const qMap  = { high: ['badge-high','Alta'], med: ['badge-med','Media'], low: ['badge-low','Baja'] };
+dashLeads.forEach(l => {
+  tbody.innerHTML += `<tr>
+    <td>
+      <div style="font-size:12px;font-weight:600;color:var(--color-neutral-grey-800)">${l.name}</div>
+      <div style="font-size:11px;color:var(--color-neutral-grey-500);margin-top:2px">${l.msg.substring(0,24)}…</div>
+    </td>
+    <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:${l.trust}%;background:${scoreColor(l.trust)}"></div></div><span style="font-size:11px;font-weight:600;min-width:24px;text-align:right;color:${scoreColor(l.trust)}">${l.trust}</span></div></td>
+    <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:${l.conv}%;background:${scoreColor(l.conv)}"></div></div><span style="font-size:11px;font-weight:600;min-width:24px;text-align:right;color:${scoreColor(l.conv)}">${l.conv}</span></div></td>
+    <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:${l.urg}%;background:${scoreColor(l.urg)}"></div></div><span style="font-size:11px;font-weight:600;min-width:24px;text-align:right;color:${scoreColor(l.urg)}">${l.urg}</span></div></td>
+    <td><span class="source-chip">${l.source}</span></td>
+    <td><span class="badge ${qMap[l.quality][0]}">${qMap[l.quality][1]}</span></td>
+  </tr>`;
+});
+
+/* ── Charts — init after layout paint so canvas has real size ── */
+const tick = '#94A2AB', grid = '#EAEEF1', bg = '#FFFFFF', border = '#D6DEE2', font = 'Nunito Sans';
+
+window.addEventListener('load', function() {
+  requestAnimationFrame(function() {
+    setTimeout(function() {
+      new Chart(document.getElementById('barChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Lun','Mar','Mié','Jue','Vie','Sáb','Hoy'],
+          datasets: [
+            { label: 'Alta calidad',  data: [12,18,14,22,16,9,18], backgroundColor: 'rgba(24,156,123,.75)', borderRadius: 4, borderSkipped: false },
+            { label: 'Media calidad', data: [20,25,19,30,22,15,28], backgroundColor: 'rgba(66,127,148,.55)', borderRadius: 4, borderSkipped: false },
+            { label: 'Baja / spam',   data: [5,4,7,6,4,2,6],       backgroundColor: 'rgba(223,21,23,.45)', borderRadius: 4, borderSkipped: false },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: tick, font: { family: font, size: 11, weight: '600' }, boxWidth: 10, padding: 12 } },
+            tooltip: { backgroundColor: bg, titleColor: '#1D2327', bodyColor: '#6A7981', borderColor: border, borderWidth: 1, titleFont: { family: font, weight: '700' }, bodyFont: { family: font }, padding: 10 }
+          },
+          scales: {
+            x: { stacked: true, grid: { display: false }, ticks: { color: tick, font: { family: font, size: 11 } } },
+            y: { stacked: true, grid: { color: grid },    ticks: { color: tick, font: { family: font, size: 11 } } }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('donutChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Alta (≥75)','Media (40–74)','Baja / spam'],
+          datasets: [{ data: [89,127,31], backgroundColor: ['rgba(24,156,123,.8)','rgba(66,127,148,.65)','rgba(223,21,23,.7)'], borderColor: '#FFFFFF', borderWidth: 3, hoverOffset: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '68%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: tick, font: { family: font, size: 11, weight: '600' }, boxWidth: 10, padding: 14 } },
+            tooltip: { backgroundColor: bg, titleColor: '#1D2327', bodyColor: '#6A7981', borderColor: border, borderWidth: 1, titleFont: { family: font, weight: '700' }, bodyFont: { family: font }, padding: 10 }
+          }
+        }
+      });
+    }, 50);
+  });
+});
+
+/* ── Queue leads ─────────────────────────────────────────────── */
+const qLeads = [
+  { id:1, name:'S. G.', initials:'SG', avatarBg:'var(--color-feedback-green-500-15)', avatarColor:'var(--color-feedback-green-500)',
+    time:'Hace 2 hs', hasEmail:true, hasPhone:true,
+    property:'Posadas 1342 Piso 4 Dpto B', agency:'Inmobiliaria Demo ARGENTINAA 4',
+    message:'Buenas, quiero coordinar una visita para el lunes. Me interesa para mudanza inmediata.',
+    tags:['Zonaprop','Capital Federal | Palermo','Venta','Departamento'],
+    score:'high', scoreNum:87,
+    reasons:[{t:'Solicita visita',p:true},{t:'Mensaje extenso',p:true},{t:'Tiene email',p:true},{t:'Portal verificado',p:true}]
+  },
+  { id:2, name:'M. R.', initials:'MR', avatarBg:'rgba(243,206,41,.15)', avatarColor:'#927C19',
+    time:'Hace 4 hs', hasEmail:false, hasPhone:true,
+    property:'Posadas 1342 Piso 4 Dpto B', agency:'Inmobiliaria Demo ARGENTINAA 4',
+    message:'Solicitud de visita: viernes, 05 de junio - mediodía (12-15hs)',
+    tags:['Portal Demo','Capital Federal | Recoleta','Venta','Departamento'],
+    score:'mid', scoreNum:61,
+    reasons:[{t:'Solicita visita',p:true},{t:'Sin email',p:false},{t:'Portal demo',p:false},{t:'Mensaje con fecha',p:true}]
+  },
+  { id:3, name:'Prueba', initials:'PR', avatarBg:'var(--color-brand-primary-500-15)', avatarColor:'var(--color-brand-primary-500)',
+    time:'Hace 4 días, 11 hs', hasEmail:true, hasPhone:true,
+    property:'Posadas 1342 Piso 4 Dpto B', agency:'Inmobiliaria Demo ARGENTINAA 4',
+    message:'Prueba',
+    tags:['Portal Demo','Capital Federal | Recoleta','Venta','Departamento'],
+    score:'low', scoreNum:28,
+    reasons:[{t:'Sin mensaje real',p:false},{t:'Portal demo',p:false},{t:'Tiene teléfono',p:true}]
+  },
+];
+
+let currentFilter = 'all';
+
+function renderQueue() {
+  const list = document.getElementById('queue-list');
+  const filtered = currentFilter === 'all' ? qLeads : qLeads.filter(l => l.score === currentFilter);
+  if (!filtered.length) {
+    list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--color-neutral-grey-500);font-size:13px">No hay leads en esta categoría</div>';
+    return;
+  }
+  const sc = { high:'sp-high', mid:'sp-mid', low:'sp-low' };
+  const sl = { high:'★ Alta calidad', mid:'— Calidad media', low:'⚠ Baja calidad' };
+  list.innerHTML = filtered.map((l, i) => `
+    <div class="lead-queue-card" style="animation-delay:${i * .05}s">
+      <div class="lq-header">
+        <div class="lq-meta">
+          <div class="lq-avatar" style="background:${l.avatarBg};color:${l.avatarColor}">${l.initials}</div>
+          <div><div class="lq-name">${l.name}</div><div class="lq-time">${l.time}</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="score-pill ${sc[l.score]}">${sl[l.score]} · ${l.scoreNum}%</div>
+          <button class="btn-trash">✕</button>
+        </div>
+      </div>
+      <div class="reason-chips">${l.reasons.map(r => `<span class="rc ${r.p ? 'rc-pos' : 'rc-neg'}">${r.p ? '✓' : '✗'} ${r.t}</span>`).join('')}</div>
+      <div class="lq-divider"></div>
+      <div class="lq-fields">
+        ${l.hasEmail ? `<div><div class="lq-field-label">Email</div><div class="lq-field-val" style="color:var(--color-neutral-grey-500)">•••@•••.com</div></div>` : ''}
+        ${l.hasPhone ? `<div><div class="lq-field-label">Teléfono</div><div class="lq-field-val">••• •••••••</div></div>` : ''}
+      </div>
+      <div class="prop-row"><div class="prop-thumb">🏢</div><div><div class="prop-name">${l.property}</div><div class="prop-agency">${l.agency}</div></div></div>
+      ${l.message ? `<div class="msg-box">${l.message}</div>` : ''}
+      <div class="tag-row">${l.tags.map(t => `<span class="ltag">${t}</span>`).join('')}</div>
+      <div class="lq-actions">
+        <button class="btn-prim">Crear contacto</button>
+        <button class="btn-sec">Asignar</button>
+        <button class="btn-danger">Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+
+function filterQueue(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderQueue();
+}
+renderQueue();
+
+/* ── Keywords ────────────────────────────────────────────────── */
+const posKws = ['visita','interesado','mudanza','comprar','urgente'];
+const negKws = ['prueba','test','demo'];
+
+function renderKws() {
+  const pl = document.getElementById('kw-pos');
+  const nl = document.getElementById('kw-neg');
+  if (pl) pl.innerHTML = posKws.map((k,i) => `<span class="kw-tag">${k}<button class="kw-tag-x" onclick="removeKw('pos',${i})">×</button></span>`).join('');
+  if (nl) nl.innerHTML = negKws.map((k,i) => `<span class="kw-tag">${k}<button class="kw-tag-x" onclick="removeKw('neg',${i})">×</button></span>`).join('');
+}
+function addKw(type) {
+  const inp = document.getElementById(`kw-${type}-input`), val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  type === 'pos' ? posKws.push(val) : negKws.push(val);
+  inp.value = '';
+  renderKws();
+}
+function removeKw(type, idx) {
+  type === 'pos' ? posKws.splice(idx, 1) : negKws.splice(idx, 1);
+  renderKws();
+}
+renderKws();
+</script>
+</body>
+</html>

@@ -18,7 +18,10 @@ const config = {
           },
         ],
       },
-      testMatch: ["<rootDir>/tests/frontend/**/*.tsx"],
+      testMatch: [
+        "<rootDir>/tests/frontend/**/*.tsx",
+        "<rootDir>/tests/frontend/**/*.ts",
+      ],
     },
     {
       displayName: "backend",
@@ -36,7 +39,10 @@ const config = {
           },
         ],
       },
-      testMatch: ["<rootDir>/tests/backend/test_simulate_endpoint.ts"],
+      testMatch: [
+        "<rootDir>/tests/backend/test_simulate_endpoint.ts",
+        "<rootDir>/tests/backend/test_simulate_random.ts",
+      ],
     },
   ],
 };

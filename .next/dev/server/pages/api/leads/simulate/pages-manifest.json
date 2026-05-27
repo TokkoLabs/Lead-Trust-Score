@@ -1,0 +1,3 @@
+{
+  "/api/leads/simulate": "pages/api/leads/simulate.js"
+}
