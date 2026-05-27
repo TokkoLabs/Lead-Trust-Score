@@ -19,9 +19,9 @@
 
 ## 1. Qué es Lead Trust Copilot
 
-Lead Trust Copilot es un **dashboard agéntico para inmobiliarias** que recibe leads entrantes (mensajes, contactos), los clasifica con IA y los prioriza en una cola visual para que el agente comercial atienda primero a los de mayor potencial.
+Lead Trust Copilot es un **dashboard agéntico para inmobiliarias** que recibe leads entrantes (mensajes, contactos), los clasifica con IA y los prioriza en cuatro vistas conectadas — Dashboard, Cola, Procesados y Criterios — para que el agente comercial atienda primero a los de mayor potencial.
 
-Cada lead es analizado por **Claude** y devuelve, en un único JSON estructurado, tres scores (trust, conversion, urgency), un flag `is_spam`, un resumen ejecutivo (`ai_summary`), una **acción recomendada** copiable al portapapeles y los IDs de las propiedades del catálogo que mejor encajan con su perfil. Un simulador en vivo permite inyectar leads "interesado" o "spam" durante la demo para mostrar cómo se reordena la cola en tiempo real.
+Cada lead es analizado por **Claude** y devuelve, en un único JSON estructurado, tres scores (trust, conversion, urgency), un flag `is_spam`, un resumen ejecutivo (`ai_summary`), una **acción recomendada** copiable al portapapeles y los IDs de las propiedades del catálogo que mejor encajan con su perfil. El **Dashboard** complementa esto con 4 KPI cards, un bar chart stacked de leads por día y calidad, un doughnut de distribución por calidad, una tabla de leads recientes, un funnel por fuente y una card de criterios de scoring con tabs (Pesos / Filtros / Canales). La **vista Cola** muestra queue cards expandidas con razones IA y contacto enmascarado. La **vista Criterios** permite configurar pesos, keywords positivas/negativas y filtros automáticos, con persistencia en `localStorage`. Un **simulador unificado** (botón `+ Nuevo lead` en el page-header de Dashboard y Cola) inyecta leads sintéticos con datos aleatorizados, mezclando 80 % interesados y 20 % spam para mostrar cómo se reordena la cola en tiempo real.
 
 La meta del hackaton no era solo el producto final, sino **demostrar el proceso de construcción cooperativa con agentes**: un `leader` que orquesta sin tocar código, `spec_author` que redacta el contrato antes de implementar, e `implementers` y `reviewers` por capa que escriben y validan en paralelo.
 
@@ -35,13 +35,28 @@ La meta del hackaton no era solo el producto final, sino **demostrar el proceso 
 | UI | **React** | `^19.2.6` |
 | Lenguaje | **TypeScript** | `^5.4.5` |
 | Estilos | **Tailwind CSS** | `^3.4.17` |
+| Design System | **Tokko** (tokens CSS + Tailwind extendido, Nunito Sans) | in-repo |
+| Gráficos | **Chart.js** + **react-chartjs-2** | `^4.5.1` / `^5.3.1` |
 | IA en runtime | **Claude API** vía `@anthropic-ai/sdk` | `^0.30.1` |
 | Modelo | `claude-sonnet-4-6` (servidor) | — |
 | Testing | **Jest** + **ts-jest** + Testing Library | `^30.4.2` |
 | Empaquetado | **Docker** + **docker-compose** | runtime local |
 | Node | `node:20-alpine` (imagen base) | 20.x |
 
-Ver `package.json` para la lista exacta de dependencias.
+### Design System Tokko
+
+El frontend usa el **Design System Tokko** (theming claro alineado con el HTML target [`ui-ux/lead-trust-dashboard-tokko (3).html`](ui-ux/)):
+
+- **Tipografía:** Nunito Sans cargada desde Google Fonts en [`pages/_document.tsx`](pages/_document.tsx) y aplicada como `font-family` base.
+- **Tokens:** variables CSS en [`product/frontend/styles/tokens.css`](product/frontend/styles/tokens.css) importadas desde [`styles/globals.css`](styles/globals.css). Cubren color, tipografía, spacing, radius (16 / 8 / 6 / 1000 px) y shadows.
+- **Paleta brand:** rojo `#DF1517` (brand-primary), teal `#1A4958` / `#427F94` (brand-secondary), feedback green / yellow / blue, grises 50-900 — todos expuestos como clases Tailwind (`bg-brand-primary-500`, `text-feedback-green-500`, etc.) vía [`tailwind.config.js`](tailwind.config.js).
+- **Animaciones:** `enter` (slide-in del feed) y `pulseDot` (live badge del bottom bar).
+
+### Router de vistas client-side
+
+La navegación entre las 4 vistas (Dashboard / Cola / Procesados / Criterios) es **client-side**, sin Next.js dynamic routing: [`pages/index.tsx`](pages/index.tsx) mantiene un estado local `activeView` y monta condicionalmente cada componente de `product/frontend/views/`. El `LeftRail` y el `PageHeader` reaccionan al cambio sin recargar la página.
+
+Ver [`package.json`](package.json) para la lista exacta de dependencias.
 
 ---
 
@@ -95,19 +110,33 @@ El archivo `.env` **nunca** debe commitearse (está en `.gitignore`). Solo se ve
 
 | Ruta | Rol |
 |------|-----|
-| [`pages/`](pages/) | Rutas de Next.js (Pages Router) y API routes en `pages/api/` |
-| [`pages/api/leads/analyze.ts`](pages/api/leads/analyze.ts) | Endpoint `POST /api/leads/analyze` (delega a `product/backend/`) |
-| [`pages/api/leads/simulate.ts`](pages/api/leads/simulate.ts) | Endpoint `POST /api/leads/simulate` para el botón de demo |
+| [`pages/`](pages/) | Rutas de Next.js (Pages Router); `pages/index.tsx` orquesta las 4 vistas |
+| [`pages/_app.tsx`](pages/_app.tsx) / [`pages/_document.tsx`](pages/_document.tsx) | Bootstrap de la app y carga de Nunito Sans desde Google Fonts |
+| [`pages/api/leads/analyze.ts`](pages/api/leads/analyze.ts) | Endpoint `POST /api/leads/analyze` (re-export thin) |
+| [`pages/api/leads/simulate.ts`](pages/api/leads/simulate.ts) | Endpoint `POST /api/leads/simulate` para el simulador unificado |
 | [`product/`](product/) | Código de aplicación: `backend/`, `frontend/`, `types/` |
-| [`product/backend/`](product/backend/) | Servicios (`ai_analyser.ts`), handlers de API y data layer mock |
-| [`product/backend/data/`](product/backend/data/) | `leads_mock.json` y `properties_mock.json` (datos sintéticos del hackaton) |
-| [`product/frontend/`](product/frontend/) | Componentes React: `DashboardLayout`, `LeadsFeed`, `LeadDetailPanel`, `SimulatorPanel`, `LeadCard`; hooks y `lib/` |
+| [`product/backend/api/leads/`](product/backend/api/leads/) | Handlers de dominio para `analyze` y `simulate` |
+| [`product/backend/services/`](product/backend/services/) | `ai_analyser.ts` (cliente de Claude + JSON estricto) |
+| [`product/backend/lib/`](product/backend/lib/) | `leadGenerators.ts` con pools (zonas, presupuestos, mensajes, sources, agencias) |
+| [`product/backend/data/`](product/backend/data/) | `leads_mock.json` (30 leads con source/estado/created_at) y `properties_mock.json` |
+| [`product/frontend/components/`](product/frontend/components/) | `AppShell`, `PageHeader`, `LeadDetailPanel`, `LeadsFeed`, `LeadCard` |
+| [`product/frontend/components/shell/`](product/frontend/components/shell/) | `Topbar`, `LeftRail`, `RightRail`, `BottomBar`, `Icon` (app shell Tokko) |
+| [`product/frontend/components/dashboard/`](product/frontend/components/dashboard/) | `KpiCard`, `KpiRow`, `LeadsBarChart`, `QualityDoughnut`, `RecentLeadsTable`, `SourceFunnel`, `CriteriaCard`, `ScoreBar` |
+| [`product/frontend/components/queue/`](product/frontend/components/queue/) | `QueueCard`, `FilterBar`, `QueueStats` |
+| [`product/frontend/components/criteria/`](product/frontend/components/criteria/) | `CriteriaSection`, `CriterionRow`, `KeywordsList` |
+| [`product/frontend/components/common/`](product/frontend/components/common/) | `Toast` (feedback de éxito/error reusable) |
+| [`product/frontend/views/`](product/frontend/views/) | `DashboardView`, `QueueView`, `ProcessedView`, `CriteriaView` (router client-side) |
+| [`product/frontend/lib/`](product/frontend/lib/) | `criteriaDefaults`, `criteriaStorage`, `dashboardMetrics`, `leadReasons`, `scoreUtils` |
+| [`product/frontend/styles/`](product/frontend/styles/) | `tokens.css` (variables CSS del Design System Tokko) |
+| [`product/frontend/hooks/`](product/frontend/hooks/) | `useLeadAnalysis` (cliente del endpoint analyze) |
 | [`product/types/`](product/types/) | Contratos TypeScript compartidos: `lead.ts`, `property.ts`, `lead_analysis.ts` |
+| [`styles/`](styles/) | `globals.css` (importa tokens Tokko + base Tailwind) |
+| [`ui-ux/`](ui-ux/) | HTML target del Design System Tokko (referencia visual) |
 | [`tests/`](tests/) | Tests por capa: `tests/backend/` y `tests/frontend/` |
-| [`styles/`](styles/) | CSS global (Tailwind) |
 | [`docker/`](docker/) | `Dockerfile`, `docker-compose.yml`, `Dockerfile.harness`, scripts del arnés |
 | [`specs/`](specs/) | Specs SDD por feature (`requirements.md`, `design.md`, `tasks.md`) |
 | [`progress/`](progress/) | Bitácora viva: `current.md`, `history.md`, `impl_*.md`, `review_*.md` |
+| [`deliverables/`](deliverables/) | Entregables del hackaton: README, guión y tips del video demo |
 | [`.claude/agents/`](.claude/agents/) | Definiciones de subagentes: `leader`, `spec_author`, implementers, reviewers, `docker_manager` |
 | [`skills/`](skills/) | Skills del arnés: [`feature-list`](skills/feature-list/SKILL.md) y [`agent-author`](skills/agent-author/SKILL.md) |
 | [`docs/`](docs/) | Documentación del proceso: [arquitectura](docs/architecture.md), [convenciones](docs/conventions.md), [SDD](docs/specs.md), [verificación](docs/verification.md), [docker](docs/docker.md), [harness-readme](docs/harness-readme.md) |
@@ -245,6 +274,16 @@ Los subagentes **escriben sus resultados en archivos** y solo devuelven al `lead
 
 El `leader` (y el humano) leen los artefactos en disco. Esto evita que la información se degrade al pasar por la ventana de contexto de varios agentes (el clásico *teléfono descompuesto*) y deja un rastro auditable de la sesión.
 
+### 5.9 Resultado real
+
+El flujo descripto en §5.1-5.8 no es teoría: se aplicó de punta a punta en este hackaton. **21 features ejecutadas** sobre el flujo SDD del arnés:
+
+- **18 features de producto** (id 1-18 en [`feature_list.json`](feature_list.json)), todas con `status: "done"` o equivalente verificado en código. Las 6 primeras (`mock_data_ingest` → `docker_setup`) cubren el MVP original. Las 12 siguientes (`tokko_design_system_setup` → `unified_random_lead_simulator`) corresponden a la migración al Design System Tokko, el rediseño del app shell, las 4 vistas con router, el dashboard con KPIs y gráficos, la vista Cola con razones IA, la vista Criterios configurable, y el simulador unificado 80/20.
+- **3 entregables del hackaton** (id 19-21): el video demo (`deliverable_video_demo`, sigue `in_progress` porque el MP4 lo graba el humano), este README (`deliverable_readme`, `done`) y [`AI_USAGE.md`](AI_USAGE.md) (`deliverable_ai_usage`, `done`).
+- **1 feature descartada en vuelo:** `docker_smoke_test` no llegó a `pending`/`spec_ready` en el backlog vigente; el smoke E2E quedó como verificación manual documentada (ver [`AI_USAGE.md §4`](AI_USAGE.md#4-decisiones) decisión 7).
+
+La evidencia concreta está en [`progress/impl_*.md`](progress/) (un informe por feature con trazabilidad `R<n> → test`) y [`progress/review_*.md`](progress/) (veredictos APPROVED firmados por el reviewer correspondiente). En conjunto, el último ciclo (features 7-18) cerró con **139 tests verdes** repartidos entre `tests/backend/` (9) y `tests/frontend/` (130).
+
 ---
 
 ## 6. Arquitectura del backend
@@ -253,7 +292,12 @@ El `leader` (y el humano) leen los artefactos en disco. Esto evita que la inform
 
 El producto es una sola app Next.js. Las **API routes** viven en [`pages/api/`](pages/api/) y son archivos thin que **re-exportan handlers** desde [`product/backend/api/`](product/backend/api/). Así separamos el routing (responsabilidad del framework) de la lógica de dominio (responsabilidad de `product/backend/`).
 
-### 6.2 Ruta de un request
+Hoy hay dos endpoints expuestos:
+
+- [`POST /api/leads/analyze`](pages/api/leads/analyze.ts) — scoring IA de un lead existente (recibe `leadId`).
+- [`POST /api/leads/simulate`](pages/api/leads/simulate.ts) — simulador unificado: genera un lead aleatorio y lo analiza en la misma request (recibe body opcional `{ type?: 'random' | 'interested' | 'spam' }`, default `random`).
+
+### 6.2 Ruta de un request (`analyze`)
 
 ```
 ┌──────────────┐    POST /api/leads/analyze    ┌───────────────────────────────────┐
@@ -289,9 +333,47 @@ El producto es una sola app Next.js. Las **API routes** viven en [`pages/api/`](
 3. [`product/backend/api/leads/analyze.ts`](product/backend/api/leads/analyze.ts) lee los mocks, busca el lead, pre-filtra propiedades candidatas e invoca al servicio.
 4. [`product/backend/services/ai_analyser.ts`](product/backend/services/ai_analyser.ts) construye el prompt, llama a Claude vía `@anthropic-ai/sdk` y valida la respuesta con `validateLeadAnalysis()`.
 5. El backend retorna `LeadAnalysis` (JSON tipado).
-6. El frontend (`LeadDetailPanel`) renderiza scores, `ai_summary`, `suggested_action` y las propiedades coincidentes.
+6. El frontend (`LeadDetailPanel`) renderiza scores, `ai_summary`, `suggested_action`, las propiedades coincidentes y las reason chips derivadas en [`product/frontend/lib/leadReasons.ts`](product/frontend/lib/leadReasons.ts).
 
-### 6.3 `ai_analyser.ts`: JSON estricto desde el system prompt
+### 6.3 Ruta de un request (`simulate`) — simulador unificado
+
+El simulador del Dashboard y la Cola dispara un único endpoint que encadena generación + análisis dentro del mismo handler. Frontend → BottomBar / PageHeader (botón `+ Nuevo lead`) → `POST /api/leads/simulate` → genera lead random desde pools → `filterCandidateProperties` → `analyseLeadWithAI` → JSON `{ lead, analysis }` al cliente.
+
+```
+┌──────────────────┐  POST /api/leads/simulate  ┌────────────────────────────────────┐
+│  Navegador       │ ───────────────────────────▶│ pages/api/leads/simulate.ts        │
+│ (PageHeader      │   body: {}  (default        │   (thin re-export)                 │
+│  "+ Nuevo lead") │    type='random')           └────────────────┬───────────────────┘
+└──────────────────┘                                              │
+         ▲                                                        ▼
+         │                              ┌─────────────────────────────────────────────┐
+         │                              │ product/backend/api/leads/simulate.ts       │
+         │  JSON { lead,                │   1. Resuelve type: si 'random', tira       │
+         │         analysis }           │      Math.random() < 0.8 → 'interested'     │
+         │                              │      else → 'spam' (SIM_RATIO_INTERESTED)   │
+         │                              │   2. lead = generateRandomLead({forceType}) │
+         │                              │   3. lee properties_mock.json               │
+         │                              │   4. filterCandidateProperties(lead, ...)   │
+         │                              │   5. analyseLeadWithAI(lead, candidates)    │
+         │                              └────────────────────────┬────────────────────┘
+         │                                                       │
+         │                              ┌────────────────────────▼────────────────────┐
+         │                              │ product/backend/lib/leadGenerators.ts       │
+         │                              │   pools: ZONAS / PRESUPUESTOS / MENSAJES    │
+         │                              │   _INTERESTED / _SPAM / SOURCES / AGENCIAS  │
+         │                              │   / DIRECCIONES; created_at = now           │
+         │                              └─────────────────────────────────────────────┘
+         │                                                       │
+         │                                                       ▼
+         │                                  ai_analyser.ts → Claude → LeadAnalysis
+         │                                                       │
+         └──────────── handleLeadSimulated(data) ◀───────────────┘
+                  insert animado en feed o sección spam
+```
+
+El cliente — [`pages/index.tsx`](pages/index.tsx) — mantiene `simLoading` + `simError`, muestra un spinner inline en el botón mientras espera y un `Toast` de error si la request falla. Como el endpoint reutiliza `analyseLeadWithAI`, **un solo click produce a la vez el lead y su scoring de IA**.
+
+### 6.4 `ai_analyser.ts`: JSON estricto desde el system prompt
 
 El servicio fuerza la salida JSON desde el **system prompt** (no desde una segunda llamada de parsing):
 
@@ -308,28 +390,28 @@ El servicio fuerza la salida JSON desde el **system prompt** (no desde una segun
 }
 ```
 
-`validateLeadAnalysis()` verifica tipos, rangos y campos obligatorios y lanza `AIResponseParseError` si la respuesta no cumple. Esto blinda el frontend contra respuestas malformadas.
+`validateLeadAnalysis()` verifica tipos, rangos y campos obligatorios y lanza `AIResponseParseError` si la respuesta no cumple. Esto blinda el frontend contra respuestas malformadas. El modelo invocado es `claude-sonnet-4-6` (hardcodeado en [`ai_analyser.ts`](product/backend/services/ai_analyser.ts) línea 187).
 
-### 6.4 Data layer mock
+### 6.5 Data layer mock
 
 Para el hackaton no hay base de datos. Los datos viven en JSON en [`product/backend/data/`](product/backend/data/):
 
-- [`leads_mock.json`](product/backend/data/leads_mock.json) — leads sintéticos con mensaje, contacto, zona, presupuesto y `property_ids`.
+- [`leads_mock.json`](product/backend/data/leads_mock.json) — **30 leads** sintéticos con mensaje, contacto, zona, presupuesto, `property_ids`, **`source`** (Zonaprop / Argenprop / WhatsApp / Mail / Mercadolibre / Chat web / Navent), **`estado`** (Nuevo / En revisión / Calificado / Descartado), **`created_at`** (ISO 8601, distribuidos en los últimos 7 días para alimentar el bar chart del Dashboard), **`agencia`** y **`direccion_propiedad`**.
 - [`properties_mock.json`](product/backend/data/properties_mock.json) — catálogo de propiedades con id, título, zona, tipo, dormitorios y precio.
 
-Los handlers leen estos archivos con `fs.readFileSync` en cada request — suficiente para una demo y trivial de migrar a una DB real.
+Los handlers leen estos archivos con `fs.readFileSync` en cada request — suficiente para una demo y trivial de migrar a una DB real. Para el simulador, [`product/backend/lib/leadGenerators.ts`](product/backend/lib/leadGenerators.ts) expone pools reusables (zonas, presupuestos, mensajes interested/spam, sources, agencias, direcciones) que alimentan `generateRandomLead`.
 
-### 6.5 Tipos compartidos
+### 6.6 Tipos compartidos
 
 [`product/types/`](product/types/) define el contrato entre backend y frontend:
 
-- [`lead.ts`](product/types/lead.ts) — `Lead` (id, mensaje, contacto, zona, presupuesto, property_ids).
+- [`lead.ts`](product/types/lead.ts) — `Lead` (id, mensaje, contacto, zona, presupuesto, property_ids) más los campos `source`, `estado`, `created_at`, `agencia`, `direccion_propiedad` (todos opcionales para no romper specs previas) y los enums `Source` y `Estado`.
 - [`property.ts`](product/types/property.ts) — `Property` (catálogo).
 - [`lead_analysis.ts`](product/types/lead_analysis.ts) — `LeadAnalysis` (output de Claude) + `AIResponseParseError`.
 
 El frontend importa los mismos tipos que el backend produce: **un solo source of truth** para el shape del JSON que cruza la red.
 
-### 6.6 Seguridad de la API key
+### 6.7 Seguridad de la API key
 
 `ANTHROPIC_API_KEY` se inyecta desde `.env` **en runtime**, nunca hardcodeada ni baked en la imagen Docker:
 
@@ -342,15 +424,15 @@ El frontend importa los mismos tipos que el backend produce: **un solo source of
 
 ## 7. Entregables
 
-| Entregable | Descripción |
-|------------|-------------|
-| [`deliverables/README.md`](deliverables/README.md) | Índice de entregables del hackaton con el resumen del video planificado (duración, qué muestra) y las instrucciones de `git-lfs` para commitear el MP4. |
-| [`deliverables/script.md`](deliverables/script.md) | Guión narrado del video demo: checklist "Antes de grabar", 4 escenas con timestamps y voice-over en español. |
-| [`deliverables/recording-tips.md`](deliverables/recording-tips.md) | Tips de grabación: herramientas (QuickTime / OBS / Loom), formato MP4 H.264 1080p, voice-over vs subtítulos y manejo de peso con git-lfs. |
-| `deliverables/demo.mp4` | Video de 2-4 minutos mostrando el dashboard, el panel de detalle, el simulador en vivo y la app corriendo en `localhost:3000` desde Docker. *(pendiente — graba el humano siguiendo [`deliverables/script.md`](deliverables/script.md))* |
-| [`AI_USAGE.md`](AI_USAGE.md) | Documento del uso de IA: stack, runtime vs dev, patrones avanzados, decisiones y aprendizajes. |
-| `README.md` | Este documento. |
-| [`docs/harness-readme.md`](docs/harness-readme.md) | README original del template R2D2-Harness, preservado al pivotar el repo al producto. |
+| Entregable | Estado | Descripción |
+|------------|--------|-------------|
+| [`README.md`](README.md) | Done | Este documento (entregable 20). |
+| [`AI_USAGE.md`](AI_USAGE.md) | Done | Uso de IA: stack, runtime vs dev, patrones avanzados, decisiones y aprendizajes (entregable 21). |
+| [`deliverables/README.md`](deliverables/README.md) | Done | Índice de entregables del hackaton con el resumen del video planificado (duración, qué muestra) y las instrucciones de `git-lfs` para commitear el MP4. |
+| [`deliverables/script.md`](deliverables/script.md) | Done | Guión narrado del video demo: checklist "Antes de grabar", 4 escenas con timestamps y voice-over en español. |
+| [`deliverables/recording-tips.md`](deliverables/recording-tips.md) | Done | Tips de grabación: herramientas (QuickTime / OBS / Loom), formato MP4 H.264 1080p, voice-over vs subtítulos y manejo de peso con git-lfs. |
+| `deliverables/demo.mp4` | In progress | Video de 2-4 minutos mostrando el dashboard, el panel de detalle, el simulador en vivo y la app corriendo en `localhost:3000` desde Docker. *(graba el humano siguiendo [`deliverables/script.md`](deliverables/script.md); feature 19 sigue en `in_progress` en [`feature_list.json`](feature_list.json) hasta que el MP4 esté commiteado vía git-lfs)* |
+| [`docs/harness-readme.md`](docs/harness-readme.md) | — | README original del template R2D2-Harness, preservado al pivotar el repo al producto. |
 
 ---
 
