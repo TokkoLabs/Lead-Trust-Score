@@ -324,7 +324,7 @@
         "tests/frontend/test_random_simulator_button.tsx verifica que existe un único botón 'Nuevo lead' (no quedan los dos antiguos), que el click dispara fetch a /api/leads/simulate sin body, y que el lead retornado se inserta en el feed o sección spam según corresponda."
       ],
       "sdd": false,
-      "status": "in_progress"
+      "status": "done"
     }
   ]
 }
