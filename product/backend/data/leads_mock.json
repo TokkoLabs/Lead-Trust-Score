@@ -7,7 +7,12 @@
     "zona": "Palermo",
     "tipo_propiedad": "departamento",
     "presupuesto_usd": 130000,
-    "property_ids": ["prop-01", "prop-07"]
+    "property_ids": ["prop-01", "prop-07"],
+    "source": "Zonaprop",
+    "estado": "Nuevo",
+    "created_at": "2026-05-27T03:15:00.000Z",
+    "agencia": "Tokko Realty",
+    "direccion_propiedad": "Av. Santa Fe 2350"
   },
   {
     "id": "lead-02",
@@ -17,7 +22,12 @@
     "zona": "San Isidro",
     "tipo_propiedad": "casa",
     "presupuesto_usd": 450000,
-    "property_ids": ["prop-06", "prop-11"]
+    "property_ids": ["prop-06", "prop-11"],
+    "source": "Argenprop",
+    "estado": "Calificado",
+    "created_at": "2026-05-26T09:42:00.000Z",
+    "agencia": "Bullrich Propiedades",
+    "direccion_propiedad": "Av. Libertador 4450"
   },
   {
     "id": "lead-03",
@@ -27,7 +37,12 @@
     "zona": "Caballito",
     "tipo_propiedad": "ph",
     "presupuesto_usd": 200000,
-    "property_ids": ["prop-03", "prop-09"]
+    "property_ids": ["prop-03", "prop-09"],
+    "source": "Mail",
+    "estado": "En revisión",
+    "created_at": "2026-05-25T17:08:00.000Z",
+    "agencia": "RE/MAX Argentina",
+    "direccion_propiedad": "Av. Rivadavia 5820"
   },
   {
     "id": "lead-04",
@@ -37,7 +52,12 @@
     "zona": "Belgrano",
     "tipo_propiedad": "oficina",
     "presupuesto_usd": 1500,
-    "property_ids": ["prop-08"]
+    "property_ids": ["prop-08"],
+    "source": "Mail",
+    "estado": "Calificado",
+    "created_at": "2026-05-24T11:25:00.000Z",
+    "agencia": "L. J. Ramos Brokers",
+    "direccion_propiedad": "Av. Cabildo 1875"
   },
   {
     "id": "lead-05",
@@ -47,7 +67,12 @@
     "zona": "Villa Crespo",
     "tipo_propiedad": "local_comercial",
     "presupuesto_usd": 95000,
-    "property_ids": ["prop-04", "prop-12"]
+    "property_ids": ["prop-04", "prop-12"],
+    "source": "Zonaprop",
+    "estado": "En revisión",
+    "created_at": "2026-05-23T14:50:00.000Z",
+    "agencia": "Castex Propiedades",
+    "direccion_propiedad": "Honduras 5450"
   },
   {
     "id": "lead-06",
@@ -57,7 +82,12 @@
     "zona": "Palermo",
     "tipo_propiedad": "departamento",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-01"]
+    "property_ids": ["prop-01"],
+    "source": "Chat web",
+    "estado": "Descartado",
+    "created_at": "2026-05-22T08:10:00.000Z",
+    "agencia": "Tokko Realty",
+    "direccion_propiedad": "Gorriti 4120"
   },
   {
     "id": "lead-07",
@@ -67,7 +97,12 @@
     "zona": "Belgrano",
     "tipo_propiedad": "casa",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-02"]
+    "property_ids": ["prop-02"],
+    "source": "WhatsApp",
+    "estado": "Descartado",
+    "created_at": "2026-05-21T19:33:00.000Z",
+    "agencia": "Inmobiliaria del Plata",
+    "direccion_propiedad": "Av. Cabildo 1875"
   },
   {
     "id": "lead-08",
@@ -77,7 +112,12 @@
     "zona": "Caballito",
     "tipo_propiedad": "departamento",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-10"]
+    "property_ids": ["prop-10"],
+    "source": "Mercadolibre",
+    "estado": "Descartado",
+    "created_at": "2026-05-21T10:05:00.000Z",
+    "agencia": "Miguel Ludmer Inmobiliaria",
+    "direccion_propiedad": "Av. Rivadavia 5820"
   },
   {
     "id": "lead-09",
@@ -87,7 +127,12 @@
     "zona": "Tigre",
     "tipo_propiedad": "casa",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-11"]
+    "property_ids": ["prop-11"],
+    "source": "Navent",
+    "estado": "Nuevo",
+    "created_at": "2026-05-26T16:20:00.000Z",
+    "agencia": "Toribio Achával",
+    "direccion_propiedad": "Soldado de la Independencia 990"
   },
   {
     "id": "lead-10",
@@ -97,7 +142,12 @@
     "zona": "Flores",
     "tipo_propiedad": "local_comercial",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-04"]
+    "property_ids": ["prop-04"],
+    "source": "Chat web",
+    "estado": "En revisión",
+    "created_at": "2026-05-25T07:55:00.000Z",
+    "agencia": "Castex Propiedades",
+    "direccion_propiedad": "Av. Corrientes 4310"
   },
   {
     "id": "lead-11",
@@ -107,7 +157,12 @@
     "zona": "Recoleta",
     "tipo_propiedad": "departamento",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-05"]
+    "property_ids": ["prop-05"],
+    "source": "Mail",
+    "estado": "Descartado",
+    "created_at": "2026-05-22T22:14:00.000Z",
+    "agencia": "Izrastzoff Estudio Inmobiliario",
+    "direccion_propiedad": "Posadas 1342 Piso 4 Dpto B"
   },
   {
     "id": "lead-12",
@@ -117,7 +172,12 @@
     "zona": "Palermo",
     "tipo_propiedad": null,
     "presupuesto_usd": 0,
-    "property_ids": ["prop-01"]
+    "property_ids": ["prop-01"],
+    "source": "Mercadolibre",
+    "estado": "Descartado",
+    "created_at": "2026-05-23T03:47:00.000Z",
+    "agencia": "RE/MAX Argentina",
+    "direccion_propiedad": "Bonpland 1885"
   },
   {
     "id": "lead-13",
@@ -127,7 +187,12 @@
     "zona": "San Isidro",
     "tipo_propiedad": "casa",
     "presupuesto_usd": 0,
-    "property_ids": ["prop-06"]
+    "property_ids": ["prop-06"],
+    "source": "WhatsApp",
+    "estado": "Descartado",
+    "created_at": "2026-05-24T05:30:00.000Z",
+    "agencia": "Bullrich Propiedades",
+    "direccion_propiedad": "Av. Libertador 4450"
   },
   {
     "id": "lead-14",
@@ -137,7 +202,12 @@
     "zona": "Palermo",
     "tipo_propiedad": "departamento",
     "presupuesto_usd": 120000,
-    "property_ids": ["prop-01", "prop-07"]
+    "property_ids": ["prop-01", "prop-07"],
+    "source": "Zonaprop",
+    "estado": "En revisión",
+    "created_at": "2026-05-25T20:02:00.000Z",
+    "agencia": "Tokko Realty",
+    "direccion_propiedad": "Av. Santa Fe 2350"
   },
   {
     "id": "lead-15",
@@ -147,6 +217,236 @@
     "zona": "Caballito",
     "tipo_propiedad": "ph",
     "presupuesto_usd": 175000,
-    "property_ids": ["prop-03"]
+    "property_ids": ["prop-03"],
+    "source": "Argenprop",
+    "estado": "Calificado",
+    "created_at": "2026-05-26T12:48:00.000Z",
+    "agencia": "L. J. Ramos Brokers",
+    "direccion_propiedad": "Av. Rivadavia 5820"
+  },
+  {
+    "id": "lead-16",
+    "mensaje": "Hola, quisiera coordinar una visita esta semana, estoy interesado en mudarme cuanto antes a un dos ambientes en Palermo.",
+    "telefono": "+54 9 11 3421-7788",
+    "email": "lorena.aguirre@gmail.com",
+    "zona": "Palermo",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 150000,
+    "property_ids": ["prop-01"],
+    "source": "Zonaprop",
+    "estado": "Nuevo",
+    "created_at": "2026-05-27T05:30:00.000Z",
+    "agencia": "Tokko Realty",
+    "direccion_propiedad": "Honduras 5450"
+  },
+  {
+    "id": "lead-17",
+    "mensaje": "Me interesa comprar el departamento, tengo el presupuesto aprobado y puedo cerrar rápido en Belgrano.",
+    "telefono": "+54 9 11 5670-2244",
+    "email": "ezequiel.mendez@gmail.com",
+    "zona": "Belgrano",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 240000,
+    "property_ids": ["prop-02"],
+    "source": "Argenprop",
+    "estado": "Calificado",
+    "created_at": "2026-05-27T07:12:00.000Z",
+    "agencia": "RE/MAX Argentina",
+    "direccion_propiedad": "Av. Cabildo 1875"
+  },
+  {
+    "id": "lead-18",
+    "mensaje": "Hola! Vi la publicación y me interesa visitar la casa en San Isidro este fin de semana.",
+    "telefono": "+54 9 11 6789-1100",
+    "email": "natalia.vidal@gmail.com",
+    "zona": "San Isidro",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 380000,
+    "property_ids": ["prop-06"],
+    "source": "WhatsApp",
+    "estado": "En revisión",
+    "created_at": "2026-05-27T09:45:00.000Z",
+    "agencia": "Bullrich Propiedades",
+    "direccion_propiedad": "Charcas 3890"
+  },
+  {
+    "id": "lead-19",
+    "mensaje": "asdf",
+    "telefono": "000-0000",
+    "email": "user2837@tempmail.org",
+    "zona": "Flores",
+    "tipo_propiedad": null,
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-09"],
+    "source": "Mercadolibre",
+    "estado": "Descartado",
+    "created_at": "2026-05-27T11:55:00.000Z",
+    "agencia": "Castex Propiedades",
+    "direccion_propiedad": "Bonpland 1885"
+  },
+  {
+    "id": "lead-20",
+    "mensaje": "Buenas, estoy interesado en visitar la propiedad este fin de semana en Recoleta. Llamame cuando puedas.",
+    "telefono": "+54 9 11 7821-3344",
+    "email": "francisco.lopez@gmail.com",
+    "zona": "Recoleta",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 200000,
+    "property_ids": ["prop-05"],
+    "source": "Zonaprop",
+    "estado": "Nuevo",
+    "created_at": "2026-05-26T07:18:00.000Z",
+    "agencia": "Izrastzoff Estudio Inmobiliario",
+    "direccion_propiedad": "Posadas 1342 Piso 4 Dpto B"
+  },
+  {
+    "id": "lead-21",
+    "mensaje": "Necesito comprar urgente porque vence mi contrato de alquiler. ¿Coordinamos visita en Caballito?",
+    "telefono": "+54 9 11 8902-4455",
+    "email": "andrea.fernandez@gmail.com",
+    "zona": "Caballito",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 120000,
+    "property_ids": ["prop-10"],
+    "source": "Mail",
+    "estado": "Calificado",
+    "created_at": "2026-05-26T14:36:00.000Z",
+    "agencia": "Miguel Ludmer Inmobiliaria",
+    "direccion_propiedad": "Av. Rivadavia 5820"
+  },
+  {
+    "id": "lead-22",
+    "mensaje": "Me interesa la propiedad, ya vendí mi anterior departamento y necesito mudarme en 30 días a Villa Crespo.",
+    "telefono": "+54 9 11 9013-5566",
+    "email": "ricardo.cabrera@gmail.com",
+    "zona": "Villa Crespo",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 175000,
+    "property_ids": ["prop-01", "prop-07"],
+    "source": "Chat web",
+    "estado": "En revisión",
+    "created_at": "2026-05-26T21:09:00.000Z",
+    "agencia": "Tokko Realty",
+    "direccion_propiedad": "Gorriti 4120"
+  },
+  {
+    "id": "lead-23",
+    "mensaje": "test",
+    "telefono": "000-0000",
+    "email": "user5523@tempmail.org",
+    "zona": "Almagro",
+    "tipo_propiedad": null,
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-10"],
+    "source": "Navent",
+    "estado": "Descartado",
+    "created_at": "2026-05-25T04:22:00.000Z",
+    "agencia": "RE/MAX Argentina",
+    "direccion_propiedad": "Av. Corrientes 4310"
+  },
+  {
+    "id": "lead-24",
+    "mensaje": "Hola, vi el aviso y quiero ir a verla. ¿Hay disponibilidad mañana a la tarde en Tigre?",
+    "telefono": "+54 9 11 1024-6677",
+    "email": "veronica.iglesias@gmail.com",
+    "zona": "Tigre",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 300000,
+    "property_ids": ["prop-11"],
+    "source": "Zonaprop",
+    "estado": "Nuevo",
+    "created_at": "2026-05-25T10:41:00.000Z",
+    "agencia": "Toribio Achával",
+    "direccion_propiedad": "Soldado de la Independencia 990"
+  },
+  {
+    "id": "lead-25",
+    "mensaje": "Quisiera información sobre la propiedad en Núñez para una posible compra inmediata. ¿Aceptan créditos hipotecarios?",
+    "telefono": "+54 9 11 1135-7788",
+    "email": "diego.alvarez@gmail.com",
+    "zona": "Núñez",
+    "tipo_propiedad": "departamento",
+    "presupuesto_usd": 240000,
+    "property_ids": ["prop-02"],
+    "source": "Argenprop",
+    "estado": "Calificado",
+    "created_at": "2026-05-24T16:54:00.000Z",
+    "agencia": "L. J. Ramos Brokers",
+    "direccion_propiedad": "Av. Cramer 2310"
+  },
+  {
+    "id": "lead-26",
+    "mensaje": "demo",
+    "telefono": "000-0000",
+    "email": "user1190@tempmail.org",
+    "zona": "Devoto",
+    "tipo_propiedad": null,
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-12"],
+    "source": "Mercadolibre",
+    "estado": "Descartado",
+    "created_at": "2026-05-24T23:11:00.000Z",
+    "agencia": "Inmobiliaria del Plata",
+    "direccion_propiedad": "Bonpland 1885"
+  },
+  {
+    "id": "lead-27",
+    "mensaje": "Estoy buscando una propiedad para mudanza urgente, ¿puedo agendar una visita el sábado en Vicente López?",
+    "telefono": "+54 9 11 1247-8899",
+    "email": "marina.castro@gmail.com",
+    "zona": "Vicente López",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 450000,
+    "property_ids": ["prop-06"],
+    "source": "WhatsApp",
+    "estado": "Calificado",
+    "created_at": "2026-05-23T09:27:00.000Z",
+    "agencia": "Bullrich Propiedades",
+    "direccion_propiedad": "Av. Libertador 4450"
+  },
+  {
+    "id": "lead-28",
+    "mensaje": "Buenas tardes, estoy interesado en agendar visita para la compra de la propiedad publicada en Almagro.",
+    "telefono": "+54 9 11 1358-9900",
+    "email": "fernando.gimenez@gmail.com",
+    "zona": "Almagro",
+    "tipo_propiedad": "ph",
+    "presupuesto_usd": 175000,
+    "property_ids": ["prop-03"],
+    "source": "Mail",
+    "estado": "En revisión",
+    "created_at": "2026-05-23T22:05:00.000Z",
+    "agencia": "Miguel Ludmer Inmobiliaria",
+    "direccion_propiedad": "Charcas 3890"
+  },
+  {
+    "id": "lead-29",
+    "mensaje": "Hola, ¿sigue disponible la propiedad? Estoy listo para hacer una oferta luego de la visita en Devoto.",
+    "telefono": "+54 9 11 1469-1100",
+    "email": "soledad.ramos@gmail.com",
+    "zona": "Devoto",
+    "tipo_propiedad": "casa",
+    "presupuesto_usd": 200000,
+    "property_ids": ["prop-02"],
+    "source": "Chat web",
+    "estado": "Nuevo",
+    "created_at": "2026-05-22T12:38:00.000Z",
+    "agencia": "Inmobiliaria del Plata",
+    "direccion_propiedad": "Av. Cabildo 1875"
+  },
+  {
+    "id": "lead-30",
+    "mensaje": "info",
+    "telefono": "000-0000",
+    "email": "user8841@tempmail.org",
+    "zona": "Flores",
+    "tipo_propiedad": null,
+    "presupuesto_usd": 0,
+    "property_ids": ["prop-09"],
+    "source": "Navent",
+    "estado": "Descartado",
+    "created_at": "2026-05-21T15:01:00.000Z",
+    "agencia": "Castex Propiedades",
+    "direccion_propiedad": "Av. Corrientes 4310"
   }
 ]

@@ -109,6 +109,218 @@
       "status": "spec_ready"
     },
     {
+      "id": 7,
+      "name": "tokko_design_system_setup",
+      "title": "Adopción del Design System Tokko (tokens, tipografía, paleta)",
+      "layer": "frontend",
+      "order": 7,
+      "description": "Migrar el frontend de tema oscuro genérico a un theming claro alineado con el HTML target ui-ux/lead-trust-dashboard-tokko.html: tokens de color (rojo brand #DF1517, teal #1A4958/#427F94, feedback green/yellow/blue, grises 50-900), tipografía Nunito Sans, radios (16/8/6/1000px), sombras y spacing tokens.",
+      "acceptance": [
+        "Existe product/frontend/styles/tokens.css (o equivalente importado desde styles/globals.css) que expone las CSS custom properties de color, tipografía, spacing, radius y shadows replicadas desde ui-ux/lead-trust-dashboard-tokko.html (sección :root).",
+        "tailwind.config.js extiende theme.colors con las claves brand-primary, brand-secondary, feedback-green, feedback-yellow, feedback-blue y neutral-grey (50-900) tomando los valores Tokko.",
+        "Nunito Sans está disponible globalmente (vía import en _app.tsx o link en _document.tsx) y aplica como font-family base.",
+        "styles/globals.css cambia background, color base y antialiasing al esquema claro Tokko (no quedan referencias a tema oscuro hardcodeadas en la raíz).",
+        "tests/frontend/test_design_tokens.tsx (o similar) verifica que un componente renderiza una clase Tailwind brand-primary y que document.body usa Nunito Sans (matcher de getComputedStyle o snapshot)."
+      ],
+      "sdd": true,
+      "status": "done"
+    },
+    {
+      "id": 8,
+      "name": "app_shell_redesign",
+      "title": "Rediseño del App Shell (Topbar, Left Rail, Right Rail, Bottom Bar)",
+      "layer": "frontend",
+      "order": 8,
+      "description": "Reemplazar el DashboardLayout actual por el shell del HTML target: topbar teal (#1A4958, 56px, logo+search global+iconos+avatar), left rail blanco (80px, botón rojo Nuevo + 8 nav items con badges), right rail (48px con 4 iconos), bottom bar (72px con KPI counter + view controls + live badge pulsante).",
+      "acceptance": [
+        "product/frontend/components/AppShell.tsx (o DashboardLayout.tsx refactorizado) renderiza topbar, left rail, content area, right rail y bottom bar siguiendo la jerarquía y dimensiones del HTML target.",
+        "Existe product/frontend/components/shell/Topbar.tsx con logo LeadTrust, search input placeholder 'Buscar leads, propiedades, contactos…', botón de notificaciones con badge numérico y avatar con iniciales del usuario.",
+        "Existe product/frontend/components/shell/LeftRail.tsx con botón primario rojo 'Nuevo' (+ icon) y nav vertical de 8 items (Dashboard, Cola con badge dinámico, Procesados, Criterios, Equipo, Integraciones, Reportes, Config); el item activo aplica fondo brand-primary al 15% + texto rojo.",
+        "Existe product/frontend/components/shell/RightRail.tsx con 4 iconos (Compartir, Marcar, Tablero, Añadir widget) y tooltip accesible.",
+        "Existe product/frontend/components/shell/BottomBar.tsx con contador 'X leads analizados' derivado del estado actual, botones de vista (Exportar, Filtrar, Ordenar, Vista lista, Vista tarjetas) y un live badge 'En vivo · Analizando leads' con dot animado (CSS keyframe pulse).",
+        "tests/frontend/test_app_shell.tsx verifica el render de las 4 regiones, el badge del item Cola refleja el length de leads pendientes y el live badge expone role='status'."
+      ],
+      "sdd": true,
+      "status": "done"
+    },
+    {
+      "id": 9,
+      "name": "view_router_navigation",
+      "title": "Navegación entre vistas (Dashboard / Cola / Procesados / Criterios)",
+      "layer": "frontend",
+      "order": 9,
+      "description": "Implementar el sistema de navegación interno: clic en items del left rail conmuta vistas (Dashboard, Cola, Procesados, Criterios) sin recargar; el page-header (breadcrumb 'Volver', título, subtítulo, tabs Hoy/7 días/30 días, botón primario) cambia dinámicamente según la vista activa.",
+      "acceptance": [
+        "Existe product/frontend/components/PageHeader.tsx que recibe props {title, subtitle, tabs?, primaryAction?} y renderiza breadcrumb + título + tabs + acción según corresponda.",
+        "pages/index.tsx (o un nuevo provider) mantiene el estado activeView ('dashboard'|'queue'|'processed'|'criteria') y lo expone a LeftRail + PageHeader vía contexto o prop drilling.",
+        "Cada vista vive en product/frontend/views/{DashboardView,QueueView,ProcessedView,CriteriaView}.tsx y se monta condicionalmente desde index.tsx.",
+        "El page-header muestra los textos del HTML target por vista: Dashboard ('Dashboard de leads' / 'Mayo 2026…'), Cola ('Cola de leads' / pendientes count), Procesados ('Leads procesados' / placeholder), Criterios ('Criterios de scoring' / descripción).",
+        "Las tabs Hoy/7 días/30 días son visibles solo en Dashboard y Cola y su estado se persiste por vista; el cambio NO recarga la página.",
+        "tests/frontend/test_view_router.tsx verifica que clic en rail-item 'Cola' renderiza QueueView, que el title del header cambia y que tabs no aparecen en Procesados ni Criterios."
+      ],
+      "sdd": true,
+      "status": "done"
+    },
+    {
+      "id": 10,
+      "name": "mock_data_extension_dashboard",
+      "title": "Extensión de mock data (source, estado, created_at) para Dashboard y Cola",
+      "layer": "backend",
+      "order": 10,
+      "description": "Ampliar el mock de leads con los campos requeridos por las vistas Dashboard y Cola del HTML target: source (Zonaprop/Argenprop/WhatsApp/Mail/Mercadolibre/Chat web/Navent), estado (Nuevo/En revisión/Calificado/Descartado), created_at (ISO date, distribuidos en los últimos 7 días para alimentar el bar chart 'Leads por día'), agencia (string) y direccion_propiedad (string).",
+      "acceptance": [
+        "product/types/lead.ts extiende Lead con los campos source (enum string), estado (enum string), created_at (string ISO), agencia (string | null), direccion_propiedad (string | null) y los marca como opcionales para no romper specs previas.",
+        "product/backend/data/leads_mock.json contiene al menos 30 leads con valores reales para los nuevos campos, distribuidos en los últimos 7 días para activar el bar chart por día.",
+        "product/backend/lib/leadGenerators.ts (nuevo) expone pools de valores random (zonas, presupuestos, mensajes interested, mensajes spam, sources, agencias, direcciones) reutilizables por /api/leads/simulate.",
+        "tests/backend/test_data_extension.ts valida que todos los registros tengan source y estado dentro del enum y que created_at sea ISO 8601 válido."
+      ],
+      "sdd": true,
+      "status": "done"
+    },
+    {
+      "id": 11,
+      "name": "dashboard_kpis_and_charts",
+      "title": "Dashboard: KPIs y Gráficos (Bar stacked + Doughnut)",
+      "layer": "frontend",
+      "order": 11,
+      "description": "Implementar la fila superior del Dashboard con 4 KPI cards (Total leads, Score promedio, Alta calidad ≥75, Descartados/spam) y los 2 gráficos del HTML target: bar chart stacked 'Leads por día y calidad' (7 días, datasets alta/media/baja) y doughnut 'Distribución por calidad'. Todos los valores derivan del estado actual de leads + analyses (computeLocalScore + aiScores).",
+      "acceptance": [
+        "Existe product/frontend/components/dashboard/KpiCard.tsx con props {label, value, delta?, accentColor} y stripe vertical de color (teal/green/red).",
+        "Existe product/frontend/components/dashboard/LeadsBarChart.tsx que usa chart.js + react-chartjs-2, configurado como stacked bars con 3 datasets (alta verde rgba(24,156,123,.75), media teal rgba(66,127,148,.55), baja rojo rgba(223,21,23,.45)) y borderRadius 4.",
+        "Existe product/frontend/components/dashboard/QualityDoughnut.tsx con cutout 68%, hoverOffset 6, 3 segmentos (Alta/Media/Baja) y leyenda inferior.",
+        "Las 4 KPI cards y ambos gráficos derivan sus valores de los leads del estado React (combinando computeLocalScore con aiScores y is_spam); el bar chart agrupa por created_at (últimos 7 días).",
+        "Existe product/frontend/lib/dashboardMetrics.ts con funciones puras computeKpis(leads, analyses) y computeDailyBuckets(leads) cubiertas por tests.",
+        "tests/frontend/test_dashboard_metrics.ts valida cálculos de KPIs (total/promedio/alta/spam) y buckets diarios para un set sintético.",
+        "tests/frontend/test_dashboard_widgets.tsx verifica render de las 4 KPI cards y que LeadsBarChart/QualityDoughnut reciben los datos calculados."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 12,
+      "name": "recent_leads_table_and_source_funnel",
+      "title": "Dashboard: Tabla 'Leads recientes' y bloque 'Volumen por fuente'",
+      "layer": "frontend",
+      "order": 12,
+      "description": "Implementar los dos bloques inferiores del Dashboard: tabla 'Leads recientes' con columnas Lead / Trust (mini-bar) / Conversión (mini-bar) / Urgencia (mini-bar) / Fuente (chip) / Estado (badge); y bloque 'Volumen por fuente' con funnel bars por canal (Zonaprop/Argenprop/WhatsApp/Mail/Chat web) según el HTML target.",
+      "acceptance": [
+        "Existe product/frontend/components/dashboard/RecentLeadsTable.tsx que renderiza una tabla accesible (role='table') con las 6 columnas y reusa un componente ScoreBar.tsx con color dinámico (verde ≥75, amarillo 50-74, rojo <50).",
+        "Existe product/frontend/components/dashboard/SourceFunnel.tsx que agrupa leads por source, calcula porcentaje relativo al máximo y renderiza barras con colores tematizados por canal según el HTML target.",
+        "Click en una fila de RecentLeadsTable abre el LeadDetailPanel (reusa la lógica de selectedLeadId existente).",
+        "Tanto la tabla como el funnel son data-driven a partir del estado React de leads del Dashboard, sin mock hardcodeado dentro del componente.",
+        "tests/frontend/test_recent_leads_table.tsx verifica render con 5 leads, asigna correctamente la clase de color a ScoreBar para distintos rangos, y dispara onSelectLead al hacer click.",
+        "tests/frontend/test_source_funnel.tsx verifica cálculo de porcentajes y orden de canales descendente."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 13,
+      "name": "dashboard_scoring_criteria_card",
+      "title": "Dashboard: Card 'Criterios de scoring' con tabs (Pesos / Filtros / Canales)",
+      "layer": "frontend",
+      "order": 13,
+      "description": "Implementar la card 'Criterios de scoring' del Dashboard con 3 sub-tabs: Pesos (3 sliders Trust/Conversión/Urgencia que deben sumar 100% con barra de color dinámico, slider 'Umbral de alerta'), Filtros (5 toggles: bloquear inválidos, detectar spam, filtrar duplicados, ignorar sin mensaje, score mín global), Canales (7 channel tags toggle + boost sliders WhatsApp/Mail). Estado en cliente, sin persistencia backend.",
+      "acceptance": [
+        "Existe product/frontend/components/dashboard/CriteriaCard.tsx con tabs internas (Pesos/Filtros/Canales) controladas por estado local.",
+        "Tab Pesos: 3 sliders 0-100 (Trust 40, Conversión 40, Urgencia 20 defaults), label muestra suma en tiempo real, barra coloreada (verde si =100, rojo si >100, amarillo si <100), slider 'Umbral de alerta' 0-100 default 70.",
+        "Tab Filtros: 5 toggles accesibles (role='switch') con sus labels exactos del HTML target.",
+        "Tab Canales: 7 channel tags clicables que alternan clase 'on' visualmente + 2 boost sliders (WhatsApp 1.3×, Mail 1.1×).",
+        "Botón 'Guardar criterios →' en el footer de la card que por ahora solo muestra un toast/feedback visual de éxito (sin endpoint).",
+        "tests/frontend/test_criteria_card.tsx verifica que mover un slider actualiza la suma, que >100% colorea la barra de rojo, y que toggles cambian aria-checked."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 14,
+      "name": "queue_view",
+      "title": "Vista 'Cola de leads' (queue cards expandidas con razones IA)",
+      "layer": "frontend",
+      "order": 14,
+      "description": "Implementar la vista Cola: 3 stats cards (Pendientes / Alta calidad / Baja calidad), filter bar con chips (Todos / Alta / Media / Baja), y lista de queue cards expandidas con avatar inicial coloreado por score, score pill, reason chips (✓ positivas verdes / ✗ negativas rojas), email y teléfono enmascarados, property row con dirección+agencia, message box con borde teal, tags (source/zona/operación/tipo), y action buttons (Crear contacto / Asignar / Eliminar).",
+      "acceptance": [
+        "Existe product/frontend/views/QueueView.tsx que monta los 3 stats cards, FilterBar y la lista de QueueCard.",
+        "Existe product/frontend/components/queue/QueueCard.tsx que recibe un Lead + LeadAnalysis y renderiza todas las secciones del HTML target (header con avatar/timestamp, score pill, reason chips, contacto enmascarado, property row, message box, tags, actions).",
+        "Las reason chips se derivan automáticamente del análisis IA y/o de la presencia de campos del lead (ej: 'Solicita visita' si la palabra 'visita' está en el mensaje, '✗ Sin email' si email vacío); existe product/frontend/lib/leadReasons.ts con la lógica pura y tests.",
+        "El filtro por calidad re-renderiza la lista filtrando por trust_score (Alta ≥75, Media 40-74, Baja <40) con una transición CSS suave.",
+        "El email y teléfono se enmascaran (ej: 'j•••@•••.com', '••• •••••••') por defecto y un botón ojo permite revelarlos (estado local por card).",
+        "tests/frontend/test_queue_view.tsx verifica que los stats cards reflejan los counts reales, el filtro 'Alta calidad' deja solo leads con score ≥75, y QueueCard muestra todas las secciones para un lead completo.",
+        "tests/frontend/test_lead_reasons.ts cubre la lógica de derivación de reason chips para casos representativos."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 15,
+      "name": "criteria_view",
+      "title": "Vista 'Criterios' (configurador completo con keywords y filtros)",
+      "layer": "frontend",
+      "order": 15,
+      "description": "Implementar la vista Criterios full: info band azul, layout 2 columnas. Izquierda: cards 'Datos de contacto' (3 criterios con toggle + select Alta/Media/Baja), 'Propiedad y fuente' (2 criterios), 'Pesos de dimensiones' (3 sliders). Derecha: card 'Mensaje' (3 criterios + keywords positivas/negativas con add/remove dinámico), card 'Filtros automáticos' (4 toggles), botones 'Restablecer defaults' + 'Guardar criterios →'. Sin persistencia backend; estado en cliente.",
+      "acceptance": [
+        "Existe product/frontend/views/CriteriaView.tsx con el layout 2 columnas y el banner de información azul superior.",
+        "Existe product/frontend/components/criteria/CriterionRow.tsx reusable que renderiza una fila con etiqueta + toggle on/off + select de peso (Alta/Media/Baja).",
+        "Existe product/frontend/components/criteria/KeywordsList.tsx con input + botón 'Agregar', lista de tags removibles (×), y soporta dos modos ('positivas' verde / 'negativas' rojo) con defaults del HTML target (positivas: visita, interesado, mudanza, comprar, urgente; negativas: prueba, test, demo).",
+        "Existe product/frontend/lib/criteriaDefaults.ts que centraliza los valores default; el botón 'Restablecer defaults' los restaura sin recargar.",
+        "Botón 'Guardar criterios →' muestra un toast de confirmación visual y persiste el estado en localStorage (clave 'criteria_v1') para que sobreviva al refresh; no requiere backend.",
+        "tests/frontend/test_criteria_view.tsx verifica add/remove de keywords, restablecer defaults vuelve al baseline, y guardar escribe en localStorage."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 16,
+      "name": "processed_view_placeholder",
+      "title": "Vista 'Procesados' (placeholder con copy alineado al HTML target)",
+      "layer": "frontend",
+      "order": 16,
+      "description": "Implementar la vista Procesados como placeholder consistente con el resto del dashboard: texto 'Vista en construcción' centrado, ilustración o ícono neutro, y un CTA secundario sugerido (ej: 'Volver al dashboard'). El page-header muestra título 'Leads procesados' y subtítulo descriptivo.",
+      "acceptance": [
+        "Existe product/frontend/views/ProcessedView.tsx que renderiza el placeholder centrado con el copy 'Vista en construcción' y un CTA secundario 'Volver al dashboard' que cambia activeView a 'dashboard'.",
+        "El componente usa los tokens Tokko (colores neutrales, tipografía Nunito Sans) sin estilos inline.",
+        "tests/frontend/test_processed_view.tsx verifica el render del copy y que el CTA dispara el cambio de vista."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 17,
+      "name": "lead_detail_tokko_redesign",
+      "title": "Rediseño del LeadDetailPanel al estilo Tokko (manteniendo IA)",
+      "layer": "frontend",
+      "order": 17,
+      "description": "Refactorizar product/frontend/components/LeadDetailPanel.tsx al estilo Tokko: avatar con iniciales coloreado por score, score pill superior, secciones de Trust/Conversion/Urgency con mini-bars, sección 'Análisis IA' (ai_summary), 'Acción Recomendada' (suggested_action + copiar), reason chips, property row con tarjetas Tokko para propiedades coincidentes (resolución de property_match_ids), y action buttons (Crear contacto / Asignar / Marcar como spam). Conserva la integración con useLeadAnalysis y el skeleton/shimmer de loading.",
+      "acceptance": [
+        "product/frontend/components/LeadDetailPanel.tsx adopta el design system Tokko (fondo blanco, sombras low, radios 16px, tipografía Nunito Sans) y elimina referencias a clases gray-* del dark theme anterior.",
+        "Se mantienen las features existentes: badge trust_score circular con color semántico, barras de conversion/urgency, ai_summary con etiqueta 'Análisis IA', copiar suggested_action, tarjetas de propiedades coincidentes filtradas por property_match_ids, skeleton de loading.",
+        "Se agregan reason chips derivadas con la misma lógica de product/frontend/lib/leadReasons.ts (feature 14).",
+        "Se agrega un footer con 3 action buttons consistentes con QueueCard (Crear contacto / Asignar / Marcar como spam).",
+        "tests/frontend/test_lead_detail_panel.tsx (actualizado) verifica el nuevo styling vía clases brand-/feedback-, el render de reason chips y el footer de acciones."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
+      "id": 18,
+      "name": "unified_random_lead_simulator",
+      "title": "Simulador unificado: 1 botón que genera leads random (80/20 interested/spam)",
+      "layer": "fullstack",
+      "order": 18,
+      "description": "Unificar los dos botones actuales ('Simular Lead Interesado' + 'Simular Lead Spam') en un único botón 'Generar lead random' (o '+ Nuevo lead' en el page-header) que dispara la generación de un lead sintético con datos aleatorizados desde pools (zona, presupuesto, mensaje, tipo_propiedad, source, agencia, direccion_propiedad) y mezcla 80% interested / 20% spam. Backend: extender /api/leads/simulate. Frontend: eliminar SimulatorPanel con 2 botones y exponer 1 acción primaria.",
+      "acceptance": [
+        "product/backend/api/leads/simulate.ts acepta body opcional { type?: 'random' | 'interested' | 'spam' } (default 'random'); cuando type='random' o ausente, el endpoint elige internamente con probabilidad 0.8 'interested' y 0.2 'spam' y randomiza los atributos del lead desde product/backend/lib/leadGenerators.ts (zona, presupuesto, mensaje, tipo_propiedad, source, agencia, direccion_propiedad, created_at=now).",
+        "El contrato de respuesta { lead, analysis } se mantiene; las pruebas existentes que llaman con type='interested'/'spam' siguen pasando.",
+        "Se elimina product/frontend/components/SimulatorPanel.tsx (con dos botones) y se reemplaza por un solo trigger: el botón primario '+ Nuevo lead' del PageHeader del Dashboard y de la vista Cola dispara POST /api/leads/simulate sin payload.",
+        "El handler de simulación reutiliza el flujo existente (insert animado, sección spam si is_spam=true, scoring y selección).",
+        "Durante la request, el botón muestra estado loading (spinner inline + disabled) y errores como toast (no inline) usando un componente Toast.tsx común.",
+        "tests/backend/test_simulate_random.ts cubre: (a) llamada sin body devuelve lead+analysis, (b) ratio aproximado 80/20 sobre 200 muestras con seed fijo, (c) campos randomizados pertenecen a los pools definidos.",
+        "tests/frontend/test_random_simulator_button.tsx verifica que existe un único botón 'Nuevo lead' (no quedan los dos antiguos), que el click dispara fetch a /api/leads/simulate sin body, y que el lead retornado se inserta en el feed o sección spam según corresponda."
+      ],
+      "sdd": false,
+      "status": "done"
+    },
+    {
       "id": 19,
       "name": "deliverable_video_demo",
       "title": "Entregable hackaton — Video demo del producto",

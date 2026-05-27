@@ -1,0 +1,3 @@
+{
+  "/api/leads/analyze": "pages/api/leads/analyze.js"
+}
