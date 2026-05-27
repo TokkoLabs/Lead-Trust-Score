@@ -12,8 +12,8 @@ import type { Property } from '../../../types/property';
 import type { LeadAnalysis } from '../../../types/lead_analysis';
 import { filterCandidateProperties, analyseLeadWithAI } from '../../services/ai_analyser';
 
-const LEADS_PATH = path.resolve(__dirname, '../../data/leads_mock.json');
-const PROPERTIES_PATH = path.resolve(__dirname, '../../data/properties_mock.json');
+const LEADS_PATH = path.resolve(process.cwd(), 'product/backend/data/leads_mock.json');
+const PROPERTIES_PATH = path.resolve(process.cwd(), 'product/backend/data/properties_mock.json');
 
 export default async function handler(
   req: NextApiRequest,

@@ -203,10 +203,14 @@ Devuelve unicamente el objeto JSON de analisis.`;
 
   const rawText = content.text.trim();
 
+  // Strip markdown code blocks that Claude sometimes adds despite instructions
+  const codeBlockMatch = rawText.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/);
+  const jsonStr = codeBlockMatch ? codeBlockMatch[1].trim() : rawText;
+
   // R8, R10: Intentar parsear como JSON
   let parsed: unknown;
   try {
-    parsed = JSON.parse(rawText);
+    parsed = JSON.parse(jsonStr);
   } catch {
     throw new AIResponseParseError('Invalid AI response: not valid JSON');
   }

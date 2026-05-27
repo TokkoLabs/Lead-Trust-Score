@@ -49,8 +49,8 @@ const SPAM_TEMPLATE: Omit<Lead, "id"> = {
 };
 
 const PROPERTIES_PATH = path.resolve(
-  __dirname,
-  "../../data/properties_mock.json"
+  process.cwd(),
+  "product/backend/data/properties_mock.json"
 );
 
 // R1: Handler principal

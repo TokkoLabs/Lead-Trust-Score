@@ -15,9 +15,10 @@ RUN npm ci
 # Copy source
 COPY pages/ ./pages/
 COPY product/ ./product/
+COPY styles/ ./styles/
 COPY tailwind.config.js ./
+COPY postcss.config.js ./
 COPY tsconfig.json ./
-
 COPY next.config.js ./
 
 # ANTHROPIC_API_KEY is a server-side runtime variable — it must NOT be baked
@@ -43,6 +44,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
+# Data files are read at runtime by API routes (not embedded in .next build)
+COPY --from=builder /app/product/backend/data ./product/backend/data
 
 EXPOSE 3000
 
